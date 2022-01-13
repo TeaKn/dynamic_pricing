@@ -1,10 +1,12 @@
 package com.price.ui.controller;
 
+import com.price.service.WeatherClient;
 import com.price.ui.model.response.PriceRest;
 import com.price.ui.model.response.WeatherRest;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.Base64Utils;
@@ -18,55 +20,29 @@ import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+// TODO: CALL GEOLOCATION API
+// TODO: CALL WEATHER API
+
 @RestController
 @RequestMapping("/dynamic-price")
 public class PriceController {
 
-    @PostMapping(path = "/getAccessToken")
-    public Mono<String> getAccessToken() {
+    @Autowired
+    private WeatherClient weatherClient;
 
-        // TODO: GET ACCESS TOKEN
-        // get access token
+    @GetMapping(path = "/getAccess", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public Mono<PriceRest> getAccess() {
+        return weatherClient.getAccessToken();
+    }
 
-        // create and configure WebClient
+    @GetMapping(path = "/getGeolocation")
+    public Mono<PriceRest> getGeolocation() {
+        return weatherClient.getGeolocation();
+    }
 
-        WebClient accessTokenClient = WebClient.builder()
-                .baseUrl("https://api.srgssr.ch/oauth/v1/accesstoken?grant_type=client_credentials")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                .defaultHeader(HttpHeaders.CONTENT_LENGTH, "0")
-                .defaultHeader("Cache-Control", "no-cache")
-                //.defaultHeader("Postman-Token", "24264e32-2de0-f1e3-f3f8-eab014bb6d76")
-                .defaultHeader("Authorization", "Basic " + Base64Utils
-                        .encodeToString(("vhCOppbnnNPlnlonuRqXqIXOzWs9SZKE" + ":" + "R79BNPhRB6IGNN07").getBytes(UTF_8)))
-                .build();
-
-        // sending request
-        WebClient.UriSpec<WebClient.RequestBodySpec> uriSpec = accessTokenClient.post();
-
-        // preparing the request - define the url
-        WebClient.RequestBodySpec bodySpec = uriSpec.uri("");
-
-        // preparing the request - define the body
-        WebClient.RequestHeadersSpec<?> headersSpec = bodySpec.bodyValue("");
-
-        // preparing a request - define the headers
-        WebClient.ResponseSpec responseSpec = headersSpec
-                .header(HttpHeaders.CONTENT_LENGTH, "0")
-
-                .accept(MediaType.ALL, MediaType.ALL)
-                .retrieve();
-
-
-        // handling response
-        Mono<String> response = headersSpec.retrieve().bodyToMono(String.class);
-
-        // TODO: CALL GEOLOCATION API
-        // call geolocation api
-
-
-
-        // TODO: CALL WEATHER API
-        return response;
+    @GetMapping(path = "/getForecast")
+    public Mono<PriceRest> getForecast() {
+        return weatherClient.getForecast();
     }
 
     @GetMapping(path = "/specificCase", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -93,7 +69,7 @@ public class PriceController {
 
         PriceRest returnValue = new PriceRest();
         returnValue.setDay(day);
-        returnValue.setLocation("Airolo");
+        //returnValue.setGeolocation("city":"Airolo");
 
         WeatherRest weather = new WeatherRest();
         weather.setDay(day);

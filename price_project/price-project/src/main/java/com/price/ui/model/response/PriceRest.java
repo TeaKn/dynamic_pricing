@@ -1,21 +1,40 @@
 package com.price.ui.model.response;
 
 import java.util.List;
+import java.util.Map;
 
 public class PriceRest {
 
-    private String location;
+    private String access_token;
+    private Map<String, String> geolocation;
     private String day;
     private List<WeatherRest> weather;
     private String price;
     private List<String> discounts;
+    private Map<String, String> forecast;
 
-    public String getLocation() {
-        return location;
+    public Map<String, String> getForecast() {
+        return forecast;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setForecast(Map<String, String> forecast) {
+        this.forecast = forecast;
+    }
+
+    public Map<String, String> getGeolocation() {
+        return geolocation;
+    }
+
+    public void setGeolocation(Map<String, String> geolocation) {
+        this.geolocation = geolocation;
+    }
+
+    public String getAccess_token() {
+        return access_token;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
     }
 
     public String getDay() {
