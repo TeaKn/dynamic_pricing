@@ -1,6 +1,7 @@
 package com.price.ui.controller;
 
 import com.price.service.WeatherClient;
+import com.price.ui.model.response.AccessToken;
 import com.price.ui.model.response.PriceRest;
 import com.price.ui.model.response.WeatherRest;
 import org.jsoup.HttpStatusException;
@@ -13,6 +14,7 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
@@ -30,19 +32,15 @@ public class PriceController {
     @Autowired
     private WeatherClient weatherClient;
 
-    @GetMapping(path = "/getAccess", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Mono<PriceRest> getAccess() {
-        return weatherClient.getAccessToken();
+
+    @GetMapping(path = "/getGeolocation/{location}")
+    public Mono<Object> getGeolocation( @PathVariable String location) {
+        return weatherClient.getGeolocation(location);
     }
 
-    @GetMapping(path = "/getGeolocation")
-    public Mono<PriceRest> getGeolocation() {
-        return weatherClient.getGeolocation();
-    }
-
-    @GetMapping(path = "/getForecast")
-    public Mono<PriceRest> getForecast() {
-        return weatherClient.getForecast();
+    @GetMapping(path = "/getForecast/{geolocation}")
+    public Mono<Object> getForecast(@PathVariable String geolocation) {
+        return weatherClient.getForecast(geolocation);
     }
 
     @GetMapping(path = "/specificCase", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})

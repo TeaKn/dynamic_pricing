@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class PriceRest {
 
-    private String access_token;
     private Map<String, String> geolocation;
     private String day;
     private List<WeatherRest> weather;
@@ -27,14 +26,6 @@ public class PriceRest {
 
     public void setGeolocation(Map<String, String> geolocation) {
         this.geolocation = geolocation;
-    }
-
-    public String getAccess_token() {
-        return access_token;
-    }
-
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
     }
 
     public String getDay() {
