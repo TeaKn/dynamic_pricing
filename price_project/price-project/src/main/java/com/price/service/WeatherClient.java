@@ -1,31 +1,27 @@
 package com.price.service;
 
 import com.price.ui.model.response.AccessToken;
-import com.price.ui.model.response.PriceRest;
+import com.price.ui.model.response.Geolocation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.internal.Function;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
-import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
 @Service
 public class WeatherClient {
 
     private static final String SRGSSR_API_BASE_URL = "https://api.srgssr.ch";
     private AccessToken accessToken;
+    private Geolocation geolocation;
     private static final String USERNAME = "vhCOppbnnNPlnlonuRqXqIXOzWs9SZKE";
     private static final String PASSWORD = "R79BNPhRB6IGNN07";
 
     private final WebClient webClient;
+
 
     // creating an instance of WebClient
 
@@ -34,42 +30,43 @@ public class WeatherClient {
         this.webClient = webClientBuilder
                 .baseUrl(SRGSSR_API_BASE_URL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                //.filter(ExchangeFilterFunctions.basicAuthentication(user, password))
+                //.filter(ExchangeFilterFunctions.basicAuthentication(USERNAME, PASSWORD))
+                //.defaultHeader(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils
+                //       .encodeToString((USERNAME + ":" + PASSWORD).getBytes(UTF_8)))
                 .build();
     }
 
     // get access token with get request
     public Mono<AccessToken> getAccessToken() {
-        return webClient.get()
+        return webClient.mutate()
+                .filters(filterList -> {
+                    filterList.add(0, basicAuthentication(USERNAME, PASSWORD));
+                })
+                .build()
+                .get()
                 .uri("/oauth/v1/accesstoken?grant_type=client_credentials")
                 .header(HttpHeaders.CONTENT_LENGTH, "0")
                 .header(HttpHeaders.CACHE_CONTROL, "no-cache")
-                .header(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils
-                        .encodeToString((USERNAME + ":" + PASSWORD).getBytes(UTF_8)))
+                //.header(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils
+                //        .encodeToString((USERNAME + ":" + PASSWORD).getBytes(UTF_8)))
                 .retrieve()
                 .bodyToMono(AccessToken.class);
-        //ACCESS_TOKEN = retrievedResource.map(AccessToken::getAccess_token);
 
 
     }
-    private Function<String, ClientRequest> setBearerTokenInHeader(ClientRequest request) {
-        return token -> ClientRequest.from(request).header("Bearer ", token).build();
-    }
 
-
-    public Mono<Object> getGeolocation(String location) {
+    public Mono<Geolocation[]> getGeolocation(String location) {
 
         if (this.accessToken == null) {
 
-            return this.getAccessToken().map((AccessToken accessToken1) -> {
+            return this.getAccessToken().flatMap((AccessToken accessToken1) -> {
                 this.accessToken = accessToken1;
                 return webClient.get()
                         .uri("/srf-meteo/geolocationNames?name={location}", location)
                         //.header(HttpHeaders.AUTHORIZATION, "Bearer ")
                         .headers(h -> h.setBearerAuth(accessToken1.getAccess_token()))
                         .retrieve()
-                        .bodyToMono(String.class);
-
+                        .bodyToMono(Geolocation[].class);
             });
         }
         return webClient.get()
@@ -77,29 +74,52 @@ public class WeatherClient {
                 //.header(HttpHeaders.AUTHORIZATION, "Bearer ")
                 .headers(h -> h.setBearerAuth(this.accessToken.getAccess_token()))
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(Geolocation[].class);
 
     }
 
-    public Mono<Object> getForecast(String geolocation) {
-
+    public Flux<Geolocation> geolocationFlux(String location) {
         if (this.accessToken == null) {
 
-            return this.getAccessToken().map((AccessToken accessToken1) -> {
+            return this.getAccessToken().flatMapMany((AccessToken accessToken1) -> {
                 this.accessToken = accessToken1;
                 return webClient.get()
-                        .uri("/srf-meteo/forecast/{geolocation}", geolocation)
+                        .uri("/srf-meteo/geolocationNames?name={location}", location)
+                        //.header(HttpHeaders.AUTHORIZATION, "Bearer ")
                         .headers(h -> h.setBearerAuth(accessToken1.getAccess_token()))
-                        .retrieve()
-                        .bodyToMono(String.class);
-
+                        .exchangeToFlux(clientResponse -> clientResponse.bodyToFlux(Geolocation.class));
             });
         }
         return webClient.get()
-                .uri("/srf-meteo/forecast/{geolocation}", geolocation)
+                .uri("/srf-meteo/geolocationNames?name={location}", location)
+                //.header(HttpHeaders.AUTHORIZATION, "Bearer ")
+                .headers(h -> h.setBearerAuth(this.accessToken.getAccess_token()))
+                .exchangeToFlux(clientResponse -> clientResponse.bodyToFlux(Geolocation.class));
+
+    }
+
+    public Mono<String> getForecast(String location) {
+
+        if (this.accessToken == null) {
+            return this.getAccessToken().flatMap((AccessToken accessToken1) -> {
+                this.accessToken = accessToken1;
+//                this.getGeolocation(location).flatMap((Geolocation geolocation1) -> {
+//                    this.geolocation = geolocation1;
+//                });
+//                    String geo_id = geolocation1.getGeolocation().getId();
+                        return webClient.get()
+                            .uri("/srf-meteo/forecast/{location}", location)
+                            .headers(h -> h.setBearerAuth(accessToken1.getAccess_token()))
+                            .retrieve()
+                            .bodyToMono(String.class);
+                });
+        }
+        String geo_id = geolocation.getGeolocation().getId();
+        return webClient.get()
+                .uri("/srf-meteo/forecast/{geolocation}", geo_id)
                 //.header(HttpHeaders.AUTHORIZATION, "Bearer ")
                 .headers(h -> h.setBearerAuth(this.accessToken.getAccess_token()))
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(String.class);
     }
 }

@@ -1,9 +1,7 @@
 package com.price.ui.controller;
 
 import com.price.service.WeatherClient;
-import com.price.ui.model.response.AccessToken;
-import com.price.ui.model.response.PriceRest;
-import com.price.ui.model.response.WeatherRest;
+import com.price.ui.model.response.*;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,13 +31,18 @@ public class PriceController {
     private WeatherClient weatherClient;
 
 
-    @GetMapping(path = "/getGeolocation/{location}")
-    public Mono<Object> getGeolocation( @PathVariable String location) {
+    @GetMapping(path = "/getGeolocation/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<Geolocation[]> getGeolocation(@PathVariable String location) {
         return weatherClient.getGeolocation(location);
     }
 
-    @GetMapping(path = "/getForecast/{geolocation}")
-    public Mono<Object> getForecast(@PathVariable String geolocation) {
+    @GetMapping(path = "/getGeolocationFlux/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Flux<Geolocation> geolocationFlux(@PathVariable String location) {
+        return weatherClient.geolocationFlux(location);
+    }
+
+    @GetMapping(path = "/getForecast/{geolocation}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<String> getForecast(@PathVariable String geolocation) {
         return weatherClient.getForecast(geolocation);
     }
 
