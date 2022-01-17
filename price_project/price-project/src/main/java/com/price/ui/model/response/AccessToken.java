@@ -1,5 +1,8 @@
 package com.price.ui.model.response;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class AccessToken {
     private String access_token;
     private Integer expires_in;

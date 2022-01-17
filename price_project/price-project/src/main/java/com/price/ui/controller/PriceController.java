@@ -30,6 +30,12 @@ public class PriceController {
     @Autowired
     private WeatherClient weatherClient;
 
+    @Autowired
+    private AccessToken accessToken;
+
+    @Autowired
+    private Geolocation geolocation;
+
 
     @GetMapping(path = "/getGeolocation/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Geolocation[]> getGeolocation(@PathVariable String location) {
@@ -40,6 +46,22 @@ public class PriceController {
     public Flux<Geolocation> geolocationFlux(@PathVariable String location) {
         return weatherClient.geolocationFlux(location);
     }
+
+    @GetMapping(path = "/getLocationFlux/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Flux<Geolocation> getLocationFlux(@PathVariable String location) {
+        return weatherClient.getLocationFlux(accessToken.getAccess_token(), location);
+    }
+
+    @GetMapping(path = "/getLocationString/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<String> getLocationString(@PathVariable String location) {
+        return weatherClient.getLocationString(accessToken.getAccess_token(), location);
+    }
+
+    @GetMapping(path = "/getForecastTest/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<String> getForecastTest(@PathVariable String location) {
+        return weatherClient.getForecastTest(accessToken.getAccess_token(), geolocation.getGeolocation().getId());
+    }
+
 
     @GetMapping(path = "/getForecast/{geolocation}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<String> getForecast(@PathVariable String geolocation) {

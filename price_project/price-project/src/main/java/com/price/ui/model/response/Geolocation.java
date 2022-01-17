@@ -1,8 +1,11 @@
 package com.price.ui.model.response;
 
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class Geolocation {
 
     private String district;

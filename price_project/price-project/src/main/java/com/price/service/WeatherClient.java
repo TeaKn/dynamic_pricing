@@ -98,6 +98,25 @@ public class WeatherClient {
 
     }
 
+    public Flux<Geolocation> getLocationFlux(String accessToken, String location) {
+
+        return webClient.get()
+                .uri("/srf-meteo/geolocationNames?name={location}", location)
+                //.header(HttpHeaders.AUTHORIZATION, "Bearer ")
+                .headers(h -> h.setBearerAuth(accessToken))
+                .exchangeToFlux(clientResponse -> clientResponse.bodyToFlux(Geolocation.class));
+
+    }
+
+    public Mono<String> getForecastTest(String accessToken, String location) {
+        return webClient.get()
+                .uri("/srf-meteo/forecast/{location}", location)
+                //.header(HttpHeaders.AUTHORIZATION, "Bearer ")
+                .headers(h -> h.setBearerAuth(accessToken))
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
     public Mono<String> getForecast(String location) {
 
         if (this.accessToken == null) {
@@ -121,5 +140,14 @@ public class WeatherClient {
                 .headers(h -> h.setBearerAuth(this.accessToken.getAccess_token()))
                 .retrieve()
                 .bodyToMono(String.class);
+    }
+
+    public Mono<String> getLocationString(String accessToken, String location) {
+
+        return webClient.get()
+                .uri("/srf-meteo/geolocationNames?name={location}", location)
+                //.header(HttpHeaders.AUTHORIZATION, "Bearer ")
+                .headers(h -> h.setBearerAuth(accessToken))
+                .exchangeToMono(clientResponse -> clientResponse.bodyToMono(String.class));
     }
 }
