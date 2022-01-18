@@ -122,6 +122,8 @@ public class WeatherClient {
         if (this.accessToken == null) {
             return this.getAccessToken().flatMap((AccessToken accessToken1) -> {
                 this.accessToken = accessToken1;
+//                Flux<Geolocation> geolocation = this.geolocationFlux(location);
+//                geolocation.flatMap((Geolocation geolocation1)-> this.geolocation = geolocation1;)
 //                this.getGeolocation(location).flatMap((Geolocation geolocation1) -> {
 //                    this.geolocation = geolocation1;
 //                });
