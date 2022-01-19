@@ -5,10 +5,12 @@ import com.price.ui.model.response.Geolocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
 @Service
@@ -39,16 +41,16 @@ public class WeatherClient {
     // get access token with get request
     public Mono<AccessToken> getAccessToken() {
         return webClient.mutate()
-                .filters(filterList -> {
-                    filterList.add(0, basicAuthentication(USERNAME, PASSWORD));
-                })
+                //.filters(filterList -> {
+                //    filterList.add(0, basicAuthentication(USERNAME, PASSWORD));
+                //})
                 .build()
                 .get()
                 .uri("/oauth/v1/accesstoken?grant_type=client_credentials")
                 .header(HttpHeaders.CONTENT_LENGTH, "0")
                 .header(HttpHeaders.CACHE_CONTROL, "no-cache")
-                //.header(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils
-                //        .encodeToString((USERNAME + ":" + PASSWORD).getBytes(UTF_8)))
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + Base64Utils
+                        .encodeToString((USERNAME + ":" + PASSWORD).getBytes(UTF_8)))
                 .retrieve()
                 .bodyToMono(AccessToken.class);
 
