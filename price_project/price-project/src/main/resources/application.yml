@@ -1,0 +1,18 @@
+spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          srf-meteo:
+            token-uri: https://api.srgssr.ch/oauth/v1/accesstoken
+        registration:
+          srf-meteo:
+            client-id: vhCOppbnnNPlnlonuRqXqIXOzWs9SZKE
+            client-secret: R79BNPhRB6IGNN07
+            authorization-grant-type: client_credentials
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
+logging:
+  level:
+    root: trace
