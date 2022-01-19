@@ -4,7 +4,7 @@ spring:
       client:
         provider:
           srf-meteo:
-            token-uri: https://api.srgssr.ch/oauth/v1/accesstoken
+            token-uri: https://api.srgssr.ch/oauth/v1/accesstoken?grant_type=client_credentials
         registration:
           srf-meteo:
             client-id: vhCOppbnnNPlnlonuRqXqIXOzWs9SZKE
