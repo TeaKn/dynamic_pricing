@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-// TODO: CALL GEOLOCATION API
 // TODO: CALL WEATHER API
 
 @RestController
@@ -26,7 +26,7 @@ public class PriceController {
 
     @GetMapping(path = "/getGeolocationString/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<String> geolocationString(@PathVariable String location) {
-        Mono<String> response = weatherClient.geolocationString(location);
+        Mono<String> response = weatherClient.getGeolocationString(location);
         log.info("whatever: {}", response);
 
         try {
@@ -40,6 +40,7 @@ public class PriceController {
         return response;
     }
 
+    // LOCATION
 
     @GetMapping(path = "/getGeolocation/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Geolocation[]> getGeolocation(@PathVariable String location) {
@@ -47,25 +48,22 @@ public class PriceController {
     }
 
     @GetMapping(path = "/getGeolocationFlux/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<Geolocation> geolocationFlux(@PathVariable String location) {
-        Flux<Geolocation> returnValue = weatherClient.geolocationFlux(location);
+    public Flux<Geolocation> getGeolocationFlux(@PathVariable String location) {
+        Flux<Geolocation> returnValue = weatherClient.getGeolocationFlux(location);
         log.info("");
         return returnValue;
     }
 
-    @GetMapping(path = "/getLocationFlux/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<Geolocation> getLocationFlux(@PathVariable String location) {
-        return weatherClient.getLocationFlux(location);
-    }
-
     @GetMapping(path = "/getLocationString/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<String> getLocationString(@PathVariable String location) {
-        return weatherClient.getLocationString(location);
+        return weatherClient.getGeolocationString(location);
     }
 
-    @GetMapping(path = "/getForecastTest/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<String> getForecastTest(@PathVariable String location) {
-        return weatherClient.getForecastTest(location);
+    // FORECAST
+
+    @GetMapping(path = "/getForecast/{geo_id}/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Flux<String> getForecast(@PathVariable("geo_id") String geo_id) {
+        return weatherClient.getForecast(geo_id);
     }
 
 }
