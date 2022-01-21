@@ -75,4 +75,8 @@ public class BQClient {
         return "some Error";
     }
 
+    public com.google.api.services.bigquery.model.Model getArimaModel() {
+        // TODO: IMPLEMENT GET ARIMA MODEL
+        return new com.google.api.services.bigquery.model.Model();
+    }
 }
