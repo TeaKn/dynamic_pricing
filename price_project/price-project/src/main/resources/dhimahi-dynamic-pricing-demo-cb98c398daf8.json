@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "dhimahi-dynamic-pricing-demo",
+  "private_key_id": "cb98c398daf8d9b46a1d24a5c35cbbd3c675aa59",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC6oWwVv9fTHOZ1\n+DMNvnQ76P0fBS2bF9t8TEOao8V2yOfvCb+yodFsweqo4FHmLil3jouYvAd9vsfB\n+7RfxmrBtdu/zUNrlbkojNyabHBe3g5FGU0ssD+RfcJCqdNA3DHVvdFHi8GGunCA\nhJ4bCn28gLWZlXJOwrQtLARnkvBOYpSthrvHcfCONgjwv2kc/a6pp00Q9UGTqjQF\nnnTCqh+8wwokdCmArD3RlQ5CrXEb82JtMp+Vw/bW8jY0WrO+7kJZ3Ks4EZl6Lj5O\nTpsShH4D31Jqfqm3ll+3ue2KiVn1K7Q9BlYC2zbeIFnKjAzf5NMJ0OnBEZzJeova\n82UbJM23AgMBAAECggEABBlLexF4N1C+gaoZJPIhMgz554Erm+kNjvtLI3hOppSJ\nqNGj/ikDpR8qfNmrCCJ3aALKGhP3GNHkfTl+n/kxmwjYHKxGEMonA4xPGVfMV/5f\nKIatD+WHCouihT2e6svAjxsuH3jNn/He9VOe9/pmVzTUct0PYkobFEA6kIkaR1O6\nn4eLRvimT8IeVIOCdLo/7ROncKS74WpmyosonOGN65doZDMhxLhk3Av/aFm1Kv+v\nPFhBw7TbOYau40Y9EDMNOL1EM+ZlpXrIvs+L232bHVCVNYUOKMMrUj0OCndYh+kG\nZmwJKodZV+Y9Hao8+cTSi9+PAmzjzHAvMrsF3cg1MQKBgQDwB0cBl0DuoHw4roCO\nwJsweiZFtEI4NnnutSYHROQ/N2E84wisrgCJpKIz9tCNAgulb/1Vz6Xac0pAW3F1\n7z9a0ICYa7h8edl8wcx1ujdmXJECvZ+T1zIyiTSN9xrMcH5d9DhLS4sZZ2CEPciG\nXxUaXfplLpBYHQUSt9Pv7pLo4wKBgQDHDIxNAlEIBZnmyznwBIPQegr0z82fVTGo\nJ7CpuDMtgi52aToMUrN8Xh9qLruJ+nNB55l2meXcLEx3dKKC+vEr3z0TqG6n32jf\nnreA77I/F+LKYWlmLuNFtpONbjC3oCWD6jlsjqtSICWCF19V4wau8WwAIO310sLZ\nBNjrP6WkHQKBgQCV9PX3mHeIndr9zoeip9JMxwOCKMv2MpKa/7FyeSfgFsk5MN4K\ng+ryE1kC/f/tGIoOIZk0MzZ68+w/qOGJvJ7oLbspfqMToUyvFKSYKG7UFKDEBZPc\n2WUTDYU37FlhwCYyrJE++UM968fw1mihCmY0wuHctOqZIgg5WX+fNn2x4QKBgGuF\nGrBqhOzpYaXqt0QwnCdcFVkCexcLRQSJVAOJrZNyk7iAxMttTOjsStnnnoQ81k+O\nVDZdkW2qPC/2v+YyuV2ye+KHhCaIJrVMneE3GTi9pVMe5Xk98KRyqCeokwZNqpYk\nSpqaQm7dUIWCLIxPUwfi/yzenMvB6mCiHq6MteP9AoGBAKbG6iRoaAvCdmQaf6hs\nAZm72SI5CVIWQQTNVdLkTvbnL6aJR33JFxaTB1ErnZswmf82zbzPvPIZkDZf+nCq\nM+AxIRw0VtmxPZZNdP9TlmldhPIhPIrnfCvirAGvK3/UvkrVbeulOmbucaf42NNp\nRW93r+i9hzi8Y93ad0kydFQH\n-----END PRIVATE KEY-----\n",
+  "client_email": "dhimahi@dhimahi-dynamic-pricing-demo.iam.gserviceaccount.com",
+  "client_id": "105987094677117631072",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dhimahi%40dhimahi-dynamic-pricing-demo.iam.gserviceaccount.com"
+}

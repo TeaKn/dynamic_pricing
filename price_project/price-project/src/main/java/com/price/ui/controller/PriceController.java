@@ -1,6 +1,7 @@
 package com.price.ui.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.price.service.BQClient;
 import com.price.service.WeatherClient;
 import com.price.ui.model.response.*;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,9 @@ public class PriceController {
 
     @Autowired
     private Geolocation geolocation;
+
+    @Autowired
+    private BQClient bqClient;
 
     // LOCATION
 
@@ -57,6 +61,13 @@ public class PriceController {
     @GetMapping(path = "/getForecast/{geo_id}/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<String> getForecast(@PathVariable("geo_id") String geo_id) {
         return weatherClient.getForecast(geo_id);
+    }
+
+    // BQ
+
+    @GetMapping(path = "/bq/query")
+    public String getNormDataWithCoeff() {
+        return bqClient.normalizedDataWithCorrelationCoeff();
     }
 
 }
