@@ -1,11 +1,12 @@
 package com.price.service;
 
+import com.price.ui.model.response.Forecast;
+import com.price.ui.model.response.ForecastFlux;
 import com.price.ui.model.response.Geolocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import org.springframework.web.util.UriComponents;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -32,13 +33,6 @@ public class WeatherClient {
                 .bodyToMono(Geolocation[].class);
 
     }
-    public Mono<String> getGeolocationString(String location) {
-
-        return webClient.get()
-                .uri("/srf-meteo/geolocationNames?name={location}", location)
-                .exchangeToMono(clientResponse -> clientResponse.bodyToMono(String.class));
-
-    }
 
     public Flux<Geolocation> getGeolocationFlux(String location) {
 
@@ -49,16 +43,6 @@ public class WeatherClient {
     }
 
     // FORECAST
-
-
-    public Mono<String> getForecastTest(String location) {
-
-        String geo_id = geolocation.getGeolocation().getId();
-        return webClient.get()
-                .uri("/srf-meteo/forecast/{location}", location)
-                .retrieve()
-                .bodyToMono(String.class);
-    }
 
     public Flux<String> getForecast(String location) {
 

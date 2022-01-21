@@ -7,11 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-// TODO: CALL WEATHER API
 
 @RestController
 @RequestMapping("/dynamic-price")
@@ -24,9 +22,11 @@ public class PriceController {
     @Autowired
     private Geolocation geolocation;
 
+    // LOCATION
+
     @GetMapping(path = "/getGeolocationString/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<String> geolocationString(@PathVariable String location) {
-        Mono<String> response = weatherClient.getGeolocationString(location);
+    public Flux<Geolocation> geolocationFlux(@PathVariable String location) {
+        Flux<Geolocation> response = weatherClient.getGeolocationFlux(location);
         log.info("whatever: {}", response);
 
         try {
@@ -40,8 +40,6 @@ public class PriceController {
         return response;
     }
 
-    // LOCATION
-
     @GetMapping(path = "/getGeolocation/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Geolocation[]> getGeolocation(@PathVariable String location) {
         return weatherClient.getGeolocation(location);
@@ -52,11 +50,6 @@ public class PriceController {
         Flux<Geolocation> returnValue = weatherClient.getGeolocationFlux(location);
         log.info("");
         return returnValue;
-    }
-
-    @GetMapping(path = "/getLocationString/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<String> getLocationString(@PathVariable String location) {
-        return weatherClient.getGeolocationString(location);
     }
 
     // FORECAST
