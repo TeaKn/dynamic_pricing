@@ -16,7 +16,7 @@ public class WeatherClientConfig {
 
     private static final String SRGSSR_API_BASE_URL = "https://api.srgssr.ch";
 
-    @Bean()
+    @Bean
     WebClient webClient(ReactiveClientRegistrationRepository clientRegistrations) {
 
         InMemoryReactiveOAuth2AuthorizedClientService clientService = new InMemoryReactiveOAuth2AuthorizedClientService(clientRegistrations);
