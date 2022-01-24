@@ -12,7 +12,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-public class WebClientConfig {
+public class WeatherClientConfig {
 
     private static final String SRGSSR_API_BASE_URL = "https://api.srgssr.ch";
 
