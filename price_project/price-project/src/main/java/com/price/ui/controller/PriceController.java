@@ -74,8 +74,15 @@ public class PriceController {
         return bqClient.normalizedDataWithCorrelationCoeff();
     }
 
-    @GetMapping(path = "bq/arimaModel")
-    public Model getArimaModel() {
-        return bqClient.getArimaModel();
+    @GetMapping(path = "bq/arimaModel/{projectId}/{datasetId}/{modelId}")
+    public Mono<String> getArimaModel(@PathVariable String projectId, @PathVariable String datasetId, @PathVariable String modelId) {
+        return bqClient.getArimaModel(projectId, datasetId, modelId);
     }
+
+    @GetMapping(path = "/bq/createArimaModel")
+    public String getCreateArimaModel() throws IOException {
+        return bqClient.ArimaModel();
+    }
+
+
 }
