@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
+
 
 @RestController
 @RequestMapping("/dynamic-price")
@@ -68,7 +70,7 @@ public class PriceController {
     // BQ
 
     @GetMapping(path = "/bq/getNormalizedDataWithCoeff")
-    public String getNormDataWithCoeff() {
+    public String getNormDataWithCoeff() throws IOException {
         return bqClient.normalizedDataWithCorrelationCoeff();
     }
 
@@ -76,5 +78,4 @@ public class PriceController {
     public Model getArimaModel() {
         return bqClient.getArimaModel();
     }
-
 }

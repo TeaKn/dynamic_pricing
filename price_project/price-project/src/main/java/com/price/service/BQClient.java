@@ -2,6 +2,9 @@ package com.price.service;
 
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.bigquery.*;
+import com.price.config.BQClientConfig;
+import org.apache.logging.log4j.spi.LoggerContextKey;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import reactor.core.CoreSubscriber;
@@ -14,16 +17,14 @@ import java.util.UUID;
 @Service
 public class BQClient {
 
-    // Initialize client that will be used to send requests. This client only needs to be created
-    // once, and can be reused for multiple requests.
-    BigQuery bigquery = BigQueryOptions.newBuilder().setProjectId("dhimahi-dynamic-pricing-demo")
-            .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream(ResourceUtils.getFile("classpath:dhimahi-dynamic-pricing-demo-cb98c398daf8.json"))))
-            .build().getService();
+    @Autowired
+    BQClientConfig bqClientConfig;
 
-    public BQClient() throws IOException {
+    public BQClient(BQClientConfig bqClientConfig) {
+        this.bqClientConfig = bqClientConfig;
     }
 
-    public String normalizedDataWithCorrelationCoeff() {
+    public String normalizedDataWithCorrelationCoeff() throws IOException {
         String projectId = "dhimahi-dynamic-pricing-demo";
         String datasetName = "bqml_tutorial";
 
@@ -45,7 +46,7 @@ public class BQClient {
                                 .setUseLegacySql(false).build();
         // Create a job ID so that we can safely retry.
         JobId jobId = JobId.of(UUID.randomUUID().toString());
-        Job queryJob = bigquery.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
+        Job queryJob = bqClientConfig.bigQueryInit().create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
 
         // Wait for the query to complete.
         try {
@@ -72,11 +73,14 @@ public class BQClient {
             System.out.println("Query not performed \n" + e);
 
         }
-        return "some Error";
+        return "some Error occured with the query";
     }
 
     public com.google.api.services.bigquery.model.Model getArimaModel() {
         // TODO: IMPLEMENT GET ARIMA MODEL
+        // GET https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/models/{modelId}
+
+
         return new com.google.api.services.bigquery.model.Model();
     }
 }
