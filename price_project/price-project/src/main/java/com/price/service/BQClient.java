@@ -19,15 +19,31 @@ import java.util.UUID;
 @Service
 public class BQClient {
 
-    @Autowired
-    private final BQClientConfig bqClientConfig;
+    BigQuery bigQueryInit;
+
+    {
+        try {
+            bigQueryInit = BigQueryOptions.newBuilder().setProjectId("dhimahi-dynamic-pricing-demo")
+                        .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream(ResourceUtils.getFile("classpath:dhimahi-dynamic-pricing-demo-cb98c398daf8.json"))))
+                    .build().getService();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //@Autowired
+    //private final BQClientConfig bqClientConfig;
     
     @Autowired
     private WebClient bqClient;
+
+    String datasetName = "bqml_tutorials";
+    String modelName = "dhimahi-dynamic-pricing-demo:bqml_tutorials.nyc_citibike_arima_model";
     
-    private BQClient(BQClientConfig bqClientConfig) {
-        this.bqClientConfig = bqClientConfig;
-    }
+    //private BQClient(BQClientConfig bqClientConfig) {
+    //    this.bqClientConfig = bqClientConfig;
+    //}
 
     public String normalizedDataWithCorrelationCoeff() throws IOException {
         String projectId = "dhimahi-dynamic-pricing-demo";
@@ -51,7 +67,7 @@ public class BQClient {
                                 .setUseLegacySql(false).build();
         // Create a job ID so that we can safely retry.
         JobId jobId = JobId.of(UUID.randomUUID().toString());
-        Job queryJob = bqClientConfig.bigQueryInit.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
+        Job queryJob = bigQueryInit.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
 
         // Wait for the query to complete.
         try {
@@ -91,6 +107,23 @@ public class BQClient {
 
     }
 
+    public void getModel(String datasetName, String modelName) {
+
+        try {
+            // Initialize client that will be used to send requests. This client only needs to be created
+            // once, and can be reused for multiple requests.
+
+            ModelId modelId = ModelId.of(datasetName, modelName);
+            Model model = bigQueryInit.getModel(modelId);
+            System.out.println("Model: " + model.getDescription());
+
+            System.out.println("Successfully retrieved model");
+        } catch (BigQueryException e) {
+            System.out.println("Cannot retrieve model \n" + e.toString());
+        }
+
+    }
+
     public String ArimaModel() throws IOException {
 
         String query = """
@@ -119,7 +152,7 @@ public class BQClient {
 
         // Create a job ID so that we can safely retry.
         JobId jobId = JobId.of(UUID.randomUUID().toString());
-        Job queryJob = bqClientConfig.bigQueryInit.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
+        Job queryJob = bigQueryInit.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
 
         // Wait for the query to complete.
         try {
@@ -160,7 +193,7 @@ public class BQClient {
 
         // Create a job ID so that we can safely retry.
         JobId jobId = JobId.of(UUID.randomUUID().toString());
-        Job queryJob = bqClientConfig.bigQueryInit.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
+        Job queryJob = bigQueryInit.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
 
         // Wait for the query to complete.
         try {

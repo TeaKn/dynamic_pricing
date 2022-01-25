@@ -84,5 +84,10 @@ public class PriceController {
         return bqClient.ArimaModel();
     }
 
+    @GetMapping(path = "bq/explainForecast")
+    public String explainArimaForecast() throws IOException {
+        return bqClient.explainForecast();
+    }
+
 
 }
