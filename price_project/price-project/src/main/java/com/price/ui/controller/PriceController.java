@@ -2,7 +2,6 @@ package com.price.ui.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.google.api.services.bigquery.model.Model;
 import com.price.service.BQClient;
 import com.price.service.WeatherClient;
 import com.price.ui.model.response.*;

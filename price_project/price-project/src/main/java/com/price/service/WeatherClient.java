@@ -1,6 +1,5 @@
 package com.price.service;
 
-import com.price.ui.model.response.Forecast;
 import com.price.ui.model.response.ForecastFlux;
 import com.price.ui.model.response.Geolocation;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,5 @@
 package com.price.ui.model.response;
 
-import java.util.ArrayList;
 
 public class ForecastFlux {
 

@@ -2,8 +2,6 @@ package com.price.service;
 
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.bigquery.*;
-import com.price.config.BQClientConfig;
-import org.apache.logging.log4j.spi.LoggerContextKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
