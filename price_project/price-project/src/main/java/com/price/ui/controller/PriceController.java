@@ -63,7 +63,7 @@ public class PriceController {
     // FORECAST
 
     @GetMapping(path = "/getForecast/{geo_id}/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<String> getForecast(@PathVariable("geo_id") String geo_id) {
+    public Flux<ForecastFlux> getForecast(@PathVariable("geo_id") String geo_id) {
         return weatherClient.getForecast(geo_id);
     }
 

@@ -44,7 +44,7 @@ public class WeatherClient {
 
     // FORECAST
 
-    public Flux<String> getForecast(String location) {
+    public Flux<ForecastFlux> getForecast(String location) {
 
         // fix the encoding of the uri, uri gets truncated because of "."
         return this.getGeolocationFlux(location).flatMap((Geolocation geolocation1) -> {
@@ -60,7 +60,7 @@ public class WeatherClient {
             return webClient.get()
                     .uri(uri)
                     .retrieve()
-                    .bodyToMono(String.class);
+                    .bodyToMono(ForecastFlux.class);
 
         });
     }
