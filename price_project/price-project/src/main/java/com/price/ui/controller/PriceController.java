@@ -2,8 +2,9 @@ package com.price.ui.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.price.service.BQClient;
-import com.price.service.WeatherClient;
+import com.price.service.TicketService;
+import com.price.service.client.BQClient;
+import com.price.service.client.WeatherClient;
 import com.price.shared.dto.TicketDTO;
 import com.price.ui.model.request.TicketRequestModel;
 import com.price.ui.model.response.*;
@@ -31,6 +32,9 @@ public class PriceController {
 
     @Autowired
     private BQClient bqClient;
+
+    @Autowired
+    private TicketService ticketService;
 
     // LOCATION
 
@@ -99,10 +103,10 @@ public class PriceController {
         ModelMapper modelMapper = new ModelMapper();
         TicketDTO ticketDTO = modelMapper.map(ticketDetails, TicketDTO.class);
 
+        TicketDTO createdTicket = ticketService.createTicket(ticketDTO);
+        PriceResponseModel returnValue = modelMapper.map(createdTicket, PriceResponseModel.class);
 
-
-
-        return new PriceResponseModel();
+        return returnValue;
     }
 
 
