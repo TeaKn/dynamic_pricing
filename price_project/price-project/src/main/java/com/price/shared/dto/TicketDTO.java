@@ -1,10 +1,9 @@
 package com.price.shared.dto;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PriceDTO implements Serializable {
+public class TicketDTO {
 
     private ArrayList<VenueDTO> venueDTO;
     private List<WeatherDTO> weatherDTO;
@@ -33,4 +32,5 @@ public class PriceDTO implements Serializable {
     public void setDemandDTO(ArrayList<DemandDTO> demandDTO) {
         this.demandDTO = demandDTO;
     }
+
 }
