@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.price.service.BQClient;
 import com.price.service.WeatherClient;
+import com.price.ui.model.request.TicketRequestModel;
 import com.price.ui.model.response.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,14 @@ public class PriceController {
     @GetMapping(path = "bq/explainForecast")
     public String explainArimaForecast() throws IOException {
         return bqClient.explainForecast();
+    }
+
+    // TICKET REQUEST
+
+    @PostMapping(path = "/tickets", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public PriceResponseModel ticketRequest(@RequestBody TicketRequestModel ticketRequestModel) {
+
+        return new PriceResponseModel();
     }
 
 
