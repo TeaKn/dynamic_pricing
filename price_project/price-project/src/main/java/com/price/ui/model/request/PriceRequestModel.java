@@ -17,4 +17,43 @@ public class PriceRequestModel {
     private String end_time;
     private ArrayList<DemandDTO> demand;
 
+    public ArrayList<VenueDTO> getVenue() {
+        return venue;
+    }
+
+    public void setVenue(ArrayList<VenueDTO> venue) {
+        this.venue = venue;
+    }
+
+    public List<WeatherDTO> getDayWeather() {
+        return dayWeather;
+    }
+
+    public void setDayWeather(List<WeatherDTO> dayWeather) {
+        this.dayWeather = dayWeather;
+    }
+
+    public String getStart_time() {
+        return start_time;
+    }
+
+    public void setStart_time(String start_time) {
+        this.start_time = start_time;
+    }
+
+    public String getEnd_time() {
+        return end_time;
+    }
+
+    public void setEnd_time(String end_time) {
+        this.end_time = end_time;
+    }
+
+    public ArrayList<DemandDTO> getDemand() {
+        return demand;
+    }
+
+    public void setDemand(ArrayList<DemandDTO> demand) {
+        this.demand = demand;
+    }
 }
