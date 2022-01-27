@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.price.service.BQClient;
 import com.price.service.WeatherClient;
+import com.price.shared.dto.TicketDTO;
 import com.price.ui.model.request.TicketRequestModel;
 import com.price.ui.model.response.*;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -92,7 +94,13 @@ public class PriceController {
     // TICKET REQUEST
 
     @PostMapping(path = "/tickets", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public PriceResponseModel ticketRequest(@RequestBody TicketRequestModel ticketRequestModel) {
+    public PriceResponseModel ticketRequest(@RequestBody TicketRequestModel ticketDetails) {
+
+        ModelMapper modelMapper = new ModelMapper();
+        TicketDTO ticketDTO = modelMapper.map(ticketDetails, TicketDTO.class);
+
+
+
 
         return new PriceResponseModel();
     }
