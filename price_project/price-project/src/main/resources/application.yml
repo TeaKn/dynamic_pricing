@@ -15,9 +15,7 @@ spring:
   datasource:
     username: tea.knezevic@dhimahi.com
     password: 74bdTw33d
-    url:
-      jdbc:
-        postgresql: //localhost:5431/dyn_price
+    url: jdbc:postgresql://localhost:5431/dyn_price
 
 logging:
   level:
