@@ -1,4 +1,4 @@
-package com.price.service;
+package com.price.service.client;
 
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.bigquery.*;

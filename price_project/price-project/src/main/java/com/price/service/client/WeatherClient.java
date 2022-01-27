@@ -1,4 +1,4 @@
-package com.price.service;
+package com.price.service.client;
 
 import com.price.ui.model.response.ForecastFlux;
 import com.price.ui.model.response.Geolocation;
