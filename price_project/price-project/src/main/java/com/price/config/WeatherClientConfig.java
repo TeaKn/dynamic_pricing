@@ -32,7 +32,11 @@ public class WeatherClientConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        return http.authorizeExchange().pathMatchers("/**").permitAll().and().build();
+        // for now disable csrf protection, zato da dela post tickets
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeExchange().pathMatchers("/**").permitAll().and();
+        return http.build();
     }
 }
 
