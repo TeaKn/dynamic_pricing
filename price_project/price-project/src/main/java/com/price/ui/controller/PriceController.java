@@ -2,6 +2,7 @@ package com.price.ui.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.price.io.repositories.VenueRepository;
 import com.price.service.TicketService;
 import com.price.service.client.BQClient;
 import com.price.service.client.WeatherClient;
@@ -33,8 +34,11 @@ public class PriceController {
     @Autowired
     private BQClient bqClient;
 
-    @Autowired
-    private TicketService ticketService;
+    //@Autowired
+    //private TicketService ticketService;
+
+   @Autowired
+    private VenueRepository venueRepository;
 
     // LOCATION
 
@@ -103,10 +107,12 @@ public class PriceController {
         ModelMapper modelMapper = new ModelMapper();
         TicketDTO ticketDTO = modelMapper.map(ticketDetails, TicketDTO.class);
 
-        TicketDTO createdTicket = ticketService.createTicket(ticketDTO);
-        PriceResponseModel returnValue = modelMapper.map(createdTicket, PriceResponseModel.class);
+        venueRepository.findByVenueId(1).subscribe(v->System.out.println("Venue id: " + v.toString()));
 
-        return returnValue;
+        //TicketDTO createdTicket = ticketService.createTicket(ticketDTO);
+        //PriceResponseModel returnValue = modelMapper.map(createdTicket, PriceResponseModel.class);
+
+        return new PriceResponseModel();
     }
 
 
