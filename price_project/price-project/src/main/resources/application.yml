@@ -12,10 +12,12 @@ spring:
             authorization-grant-type: client_credentials
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-  datasource:
-    username: tea.knezevic@dhimahi.com
-    password: 74bdTw33d
-    url: jdbc:postgresql://localhost:5431/dyn_price
+  r2dbc:
+    username: tea
+    password: 74bde
+    url: r2dbc:postgresql://localhost:5431/dyn_price
+    pool:
+      enabled: true
 
 logging:
   level:
