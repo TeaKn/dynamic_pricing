@@ -15,7 +15,7 @@ spring:
   r2dbc:
     username: tea
     password: 74bde
-    url: r2dbc:postgresql://localhost:5431/dyn_price
+    url: r2dbc:postgresql://localhost:5432/dyn_price
     pool:
       enabled: true
 

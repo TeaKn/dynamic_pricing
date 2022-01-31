@@ -1,18 +1,34 @@
 package com.price.io.entity;
 
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
+@Table("venues")
+@Data
 public class VenueEntity {
 
-    private final Integer venue_id;
+    // use this model class to persist to the database
+
+    @Id
+    private Long id;
+
+    @Column
     private Double price_max;
+
+    @Column
     private Double price_min;
+
+    @Column
     private Double adult_base_price;
 
-    public VenueEntity(Integer venue_id) {
-        this.venue_id = venue_id;
+    public Long getId() {
+        return id;
     }
 
-    public Integer getVenue_id() {
-        return venue_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Double getPrice_max() {

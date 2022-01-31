@@ -2,6 +2,7 @@ package com.price.ui.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.price.io.entity.VenueEntity;
 import com.price.io.repositories.VenueRepository;
 import com.price.service.TicketService;
 import com.price.service.client.BQClient;
@@ -34,9 +35,7 @@ public class PriceController {
     @Autowired
     private BQClient bqClient;
 
-    //@Autowired
-    //private TicketService ticketService;
-
+    // now i access it here, čeprav to je narobe
    @Autowired
     private VenueRepository venueRepository;
 
@@ -107,12 +106,24 @@ public class PriceController {
         ModelMapper modelMapper = new ModelMapper();
         TicketDTO ticketDTO = modelMapper.map(ticketDetails, TicketDTO.class);
 
-        venueRepository.findByVenueId(1).subscribe(v->System.out.println("Venue id: " + v.toString()));
+        venueRepository.findById(1L).subscribe(v->System.out.println("Venue id: " + v.toString()));
 
         //TicketDTO createdTicket = ticketService.createTicket(ticketDTO);
         //PriceResponseModel returnValue = modelMapper.map(createdTicket, PriceResponseModel.class);
 
         return new PriceResponseModel();
+    }
+
+    // return list of venues
+    @GetMapping(path = "/allVenues")
+    public Flux<VenueEntity> getVenuesList() {
+        return venueRepository.findAll();
+    }
+
+    // save a venue
+    @PostMapping(path = "addVenue")
+    public Mono<VenueEntity> saveVene(@RequestBody VenueEntity venueEntity) {
+        return venueRepository.save(venueEntity);
     }
 
 
