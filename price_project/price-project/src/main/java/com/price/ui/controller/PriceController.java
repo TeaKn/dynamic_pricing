@@ -106,6 +106,7 @@ public class PriceController {
         ModelMapper modelMapper = new ModelMapper();
         TicketDTO ticketDTO = modelMapper.map(ticketDetails, TicketDTO.class);
 
+
         venueRepository.findById(1L).subscribe(v->System.out.println("Venue id: " + v.toString()));
 
         //TicketDTO createdTicket = ticketService.createTicket(ticketDTO);
@@ -122,9 +123,9 @@ public class PriceController {
 
     // save a venue
     @PostMapping(path = "addVenue")
-    public Mono<VenueEntity> saveVene(@RequestBody VenueEntity venueEntity) {
+    public Mono<VenueEntity> saveVenue(@RequestBody VenueEntity venueEntity) {
         return venueRepository.save(venueEntity);
     }
 
-
+    // TODO: ticket request, get weather for the day and get venue details
 }
