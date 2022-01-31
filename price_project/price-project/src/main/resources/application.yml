@@ -22,3 +22,6 @@ spring:
 logging:
   level:
     root: trace
+    org:
+      springframework:
+        r2dbc: DEBUG
