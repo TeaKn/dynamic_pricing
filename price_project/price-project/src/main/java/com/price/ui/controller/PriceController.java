@@ -2,19 +2,26 @@ package com.price.ui.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.google.api.services.bigquery.model.Model;
 import com.price.io.entity.VenueEntity;
+import com.price.io.entity.WeatherEntity;
 import com.price.io.repositories.VenueRepository;
+import com.price.io.repositories.WeatherRepository;
 import com.price.service.TicketService;
+import com.price.service.WeatherService;
 import com.price.service.client.BQClient;
 import com.price.service.client.WeatherClient;
 import com.price.shared.dto.TicketDTO;
+import com.price.shared.dto.WeatherDTO;
 import com.price.ui.model.request.TicketRequestModel;
 import com.price.ui.model.response.*;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -38,6 +45,10 @@ public class PriceController {
     // now i access it here, čeprav to je narobe
    @Autowired
     private VenueRepository venueRepository;
+   @Autowired
+    private WeatherRepository weatherRepository;
+   @Autowired
+    private WeatherService weatherService;
 
     // LOCATION
 
@@ -65,7 +76,6 @@ public class PriceController {
     @GetMapping(path = "/getGeolocationFlux/{location}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<Geolocation> getGeolocationFlux(@PathVariable String location) {
         Flux<Geolocation> returnValue = weatherClient.getGeolocationFlux(location);
-        log.info("");
         return returnValue;
     }
 
@@ -74,6 +84,24 @@ public class PriceController {
     @GetMapping(path = "/getForecast/{geo_id}/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<ForecastFlux> getForecast(@PathVariable("geo_id") String geo_id) {
         return weatherClient.getForecast(geo_id);
+    }
+
+    // persist weather forecast into db
+    @GetMapping(path = "/saveForecast/{geo_id}/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public WeatherRest saveForecast(@PathVariable("geo_id") String geo_id) {
+        Flux<ForecastFlux> weatherProg = weatherClient.getForecast(geo_id);
+
+        WeatherRest returnValue = new WeatherRest();
+
+        ModelMapper modelMapper = new ModelMapper();
+        WeatherDTO weatherDTO = modelMapper.map(weatherProg, WeatherDTO.class);
+
+        WeatherDTO savedWeather = weatherService.saveWeatherPredictionWeek(weatherDTO);
+
+        returnValue = modelMapper.map(savedWeather, WeatherRest.class);
+
+
+        return returnValue;
     }
 
     // BQ

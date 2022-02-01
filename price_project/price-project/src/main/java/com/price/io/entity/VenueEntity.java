@@ -11,10 +11,10 @@ public class VenueEntity {
 
     // use this model class to persist to the database
 
-    //@Id
-    //private Long id; // autoincremented id
-
     @Id
+    private Long id; // autoincremented id
+
+    @Column
     private String name;
 
     @Column

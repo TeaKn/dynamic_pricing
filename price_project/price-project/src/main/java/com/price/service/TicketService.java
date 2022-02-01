@@ -3,7 +3,7 @@ package com.price.service;
 import com.price.shared.dto.TicketDTO;
 import com.price.shared.dto.VenueDTO;
 
-// TODO: FIND DATABASE BACKED CORE INTERFACE SPRING TO MAKE THIS WORK
+// TODO: FIND DATABASE BACKED CORE INTERFACE SPRING TO MAKE THIS WORK, pust zdj to
 // TODO: ticket service je kot service class, ON IZ DATA LAYERA DOBI CONFIGURACIJO,
 // DATA CONFIG
 // GOOGLE API DATA
