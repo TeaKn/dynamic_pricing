@@ -10,4 +10,8 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface VenueRepository extends ReactiveCrudRepository<VenueEntity, Long> {
 
+    @Query("{'name': ?0}")
+    Mono <VenueEntity> findByVenueName(String name);
+
+
 }

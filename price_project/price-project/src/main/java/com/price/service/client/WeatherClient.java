@@ -1,7 +1,12 @@
 package com.price.service.client;
 
+import com.price.io.entity.WeatherEntity;
+import com.price.io.repositories.WeatherRepository;
+import com.price.ui.model.response.Day;
+import com.price.ui.model.response.Forecast;
 import com.price.ui.model.response.ForecastFlux;
 import com.price.ui.model.response.Geolocation;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,16 +15,21 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.List;
 
 
 @Service
 public class WeatherClient {
 
 
+    private Forecast forecast;
+
     private Geolocation geolocation;
 
     @Autowired
     private WebClient webClient;
+    @Autowired
+    private WeatherRepository weatherRepository;
 
     // LOCATION
 
@@ -63,4 +73,5 @@ public class WeatherClient {
 
         });
     }
+
 }

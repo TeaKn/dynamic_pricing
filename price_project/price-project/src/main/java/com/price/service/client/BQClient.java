@@ -2,6 +2,7 @@ package com.price.service.client;
 
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.bigquery.*;
+import com.price.shared.dto.ForecastDemand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -12,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class BQClient {
@@ -181,9 +182,9 @@ public class BQClient {
     }
 
 
-    public String explainForecast() throws IOException {
+    public List<ForecastDemand> explainForecast() throws IOException {
 
-        String query = "SELECT * FROM ML.EXPLAIN_FORECAST(MODEL bqml_tutorials.nyc_citibike_arima_model, STRUCT(365 AS horizon, 0.9 AS confidence_level))";
+        String query = "SELECT forecast_timestamp, forecast_value FROM ML.FORECAST(MODEL bqml_tutorials.nyc_citibike_arima_model, STRUCT(30 AS horizon, 0.9 AS confidence_level))";
 
         QueryJobConfiguration queryConfig =
                 QueryJobConfiguration.newBuilder(query)
@@ -212,12 +213,23 @@ public class BQClient {
 
                 }
             };
-            return result.toString();
+            List<ForecastDemand> forecastDemands = new ArrayList<>();
+            for(FieldValueList value : result.getValues()) {
+                ForecastDemand forecastDemand = new ForecastDemand();
+                Date time = new Date(value.get("forecast_timestamp").getTimestampValue());
+                forecastDemand.setDate(time);
+                forecastDemand.setDemand(value.get("forecast_value").getDoubleValue());
+                forecastDemands.add(forecastDemand);
+                System.out.println(time);
+                System.out.println(value.get("forecast_value").getValue());
+            }
+
+            return forecastDemands;
 
         } catch (BigQueryException | InterruptedException e) {
             System.out.println("Query not performed \n" + e);
 
         }
-        return "some Error occured with the query";
+        return new ArrayList<>();
     }
 }

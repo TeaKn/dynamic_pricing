@@ -19,6 +19,7 @@ public class Forecast {
     @JsonProperty("hour")
     private Object hour;
 
+
     @JsonGetter("60minutes")
     public Object getSixtyMin() {
         return sixtyMin;

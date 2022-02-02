@@ -2,30 +2,33 @@ package com.price.ui.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.google.api.services.bigquery.model.Model;
 import com.price.io.entity.VenueEntity;
 import com.price.io.entity.WeatherEntity;
 import com.price.io.repositories.VenueRepository;
 import com.price.io.repositories.WeatherRepository;
-import com.price.service.TicketService;
+import com.price.service.PriceService;
 import com.price.service.WeatherService;
 import com.price.service.client.BQClient;
 import com.price.service.client.WeatherClient;
+import com.price.shared.dto.ForecastDemand;
 import com.price.shared.dto.TicketDTO;
-import com.price.shared.dto.WeatherDTO;
+import com.price.shared.dto.TicketPrice;
 import com.price.ui.model.request.TicketRequestModel;
 import com.price.ui.model.response.*;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 
 @RestController
@@ -43,12 +46,16 @@ public class PriceController {
     private BQClient bqClient;
 
     // now i access it here, čeprav to je narobe
-   @Autowired
+    @Autowired
     private VenueRepository venueRepository;
-   @Autowired
+    @Autowired
     private WeatherRepository weatherRepository;
-   @Autowired
+    @Autowired
     private WeatherService weatherService;
+
+    @Autowired
+    private PriceService priceService;
+    private Flux<ForecastFlux> forecastFlux;
 
     // LOCATION
 
@@ -61,7 +68,7 @@ public class PriceController {
             ObjectMapper objectMapper = new ObjectMapper();
             String json = objectMapper.writeValueAsString(response);
             log.info("json: {}", json);
-        } catch ( Exception e) {
+        } catch (Exception e) {
             log.error("", e);
         }
 
@@ -88,20 +95,29 @@ public class PriceController {
 
     // persist weather forecast into db
     @GetMapping(path = "/saveForecast/{geo_id}/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public WeatherRest saveForecast(@PathVariable("geo_id") String geo_id) {
-        Flux<ForecastFlux> weatherProg = weatherClient.getForecast(geo_id);
+    public void saveForecast(@PathVariable("geo_id") String geo_id) {
+        Flux<ForecastFlux> weatherRes = weatherClient.getForecast(geo_id);
 
-        WeatherRest returnValue = new WeatherRest();
+        // nimam po kraju map, zdj dela sam za airolo ki je mono
 
         ModelMapper modelMapper = new ModelMapper();
-        WeatherDTO weatherDTO = modelMapper.map(weatherProg, WeatherDTO.class);
 
-        WeatherDTO savedWeather = weatherService.saveWeatherPredictionWeek(weatherDTO);
+        Flux.just(weatherRes)
+                .map(forecastFlux -> modelMapper.map(forecastFlux, ForecastFlux.class))
+                .map(ForecastFlux::getForecast)
+                .map(Forecast::getDay)
+                .map(day -> modelMapper.map(day, WeatherEntity.class))
+                .flatMap(weatherRepository::save)
+                .thenMany(weatherRepository.findAll())
+                .subscribe(i -> log.info("saving " + i.toString()));
 
-        returnValue = modelMapper.map(savedWeather, WeatherRest.class);
 
+        //WeatherRest returnValue = new WeatherRest();
+        //ModelMapper modelMapper = new ModelMapper();
+        //WeatherDTO weatherDTO = modelMapper.map(weatherProg, WeatherDTO.class);
+        //WeatherDTO savedWeather = weatherService.saveWeatherPredictionWeek(weatherDTO);
+        //returnValue = modelMapper.map(savedWeather, WeatherRest.class);
 
-        return returnValue;
     }
 
     // BQ
@@ -122,25 +138,38 @@ public class PriceController {
     }
 
     @GetMapping(path = "bq/explainForecast")
-    public String explainArimaForecast() throws IOException {
+    public List<ForecastDemand> explainArimaForecast() throws IOException {
         return bqClient.explainForecast();
     }
 
     // TICKET REQUEST
 
     @PostMapping(path = "/tickets", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public PriceResponseModel ticketRequest(@RequestBody TicketRequestModel ticketDetails) {
+    public Mono<Flux<TicketPrice>> ticketRequest(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
 
         ModelMapper modelMapper = new ModelMapper();
         TicketDTO ticketDTO = modelMapper.map(ticketDetails, TicketDTO.class);
 
+        // parse input
+        String location = ticketDetails.getVenue();
 
-        venueRepository.findById(1L).subscribe(v->System.out.println("Venue id: " + v.toString()));
+        // if datum in tti
+        Date dateEnd = new SimpleDateFormat("dd.mm.yyyy").parse(ticketDetails.getEnd_time());
+        Date dateStart = new SimpleDateFormat("dd.mm.yyyy").parse(ticketDetails.getStart_time());
+        Date now = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(now);
 
-        //TicketDTO createdTicket = ticketService.createTicket(ticketDTO);
-        //PriceResponseModel returnValue = modelMapper.map(createdTicket, PriceResponseModel.class);
+        c.add(Calendar.HOUR, 7 * 24);
+        Date maxDate = c.getTime();
+        if (dateStart.after(now) && dateStart.before(dateEnd) && dateEnd.before(maxDate)) {
+            Flux<ForecastFlux> weatherForecast = weatherClient.getForecast(location);
 
-        return new PriceResponseModel();
+        }
+
+        return venueRepository.findByVenueName(location).map(venue ->
+                priceService.getPrices(venue)
+        );
     }
 
     // return list of venues
