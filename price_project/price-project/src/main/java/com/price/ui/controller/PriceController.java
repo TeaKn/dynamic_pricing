@@ -11,7 +11,6 @@ import com.price.service.WeatherService;
 import com.price.service.client.BQClient;
 import com.price.service.client.WeatherClient;
 import com.price.shared.dto.ForecastDemand;
-import com.price.shared.dto.TicketDTO;
 import com.price.shared.dto.TicketPrice;
 import com.price.ui.model.request.TicketRequestModel;
 import com.price.ui.model.response.*;
@@ -145,10 +144,10 @@ public class PriceController {
     // TICKET REQUEST
 
     @PostMapping(path = "/tickets", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Flux<TicketPrice>> ticketRequest(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
+    public Mono<Object> ticketRequest(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
 
-        ModelMapper modelMapper = new ModelMapper();
-        TicketDTO ticketDTO = modelMapper.map(ticketDetails, TicketDTO.class);
+        //ModelMapper modelMapper = new ModelMapper();
+        //TicketDTO ticketDTO = modelMapper.map(ticketDetails, TicketDTO.class);
 
         // parse input
         String location = ticketDetails.getVenue();

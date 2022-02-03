@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class PriceService {
@@ -19,7 +21,7 @@ public class PriceService {
     @Autowired
     BQClient bqClient;
 
-    public Flux<TicketPrice> getPrices(VenueEntity venueEntity) {
+    public Stream<Object> getPrices(VenueEntity venueEntity) {
 
         //bq
         List<ForecastDemand> forecast = null;
@@ -31,7 +33,8 @@ public class PriceService {
 
         Double dailyAverage = 45000.0;
 
-        return Flux.fromStream(forecast.stream())
+        assert forecast != null;
+        return forecast.stream()
                 .map(demand -> {
                     double d = (demand.getDemand() - dailyAverage) / dailyAverage;
                     Double price = venueEntity.getAdult_base_price() + d * 10;
