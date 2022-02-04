@@ -11,7 +11,6 @@ import com.price.service.WeatherService;
 import com.price.service.client.BQClient;
 import com.price.service.client.WeatherClient;
 import com.price.shared.dto.ForecastDemand;
-import com.price.shared.dto.TicketPrice;
 import com.price.ui.model.request.TicketRequestModel;
 import com.price.ui.model.response.*;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +24,7 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -94,29 +94,32 @@ public class PriceController {
 
     // persist weather forecast into db
     @GetMapping(path = "/saveForecast/{geo_id}/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void saveForecast(@PathVariable("geo_id") String geo_id) {
+    public Flux<WeatherEntity> saveForecast(@PathVariable("geo_id") String geo_id) {
         Flux<ForecastFlux> weatherRes = weatherClient.getForecast(geo_id);
 
         // nimam po kraju map, zdj dela sam za airolo ki je mono
 
         ModelMapper modelMapper = new ModelMapper();
 
-        Flux.just(weatherRes)
-                .map(forecastFlux -> modelMapper.map(forecastFlux, ForecastFlux.class))
+        return weatherRes
                 .map(ForecastFlux::getForecast)
                 .map(Forecast::getDay)
-                .map(day -> modelMapper.map(day, WeatherEntity.class))
-                .flatMap(weatherRepository::save)
-                .thenMany(weatherRepository.findAll())
-                .subscribe(i -> log.info("saving " + i.toString()));
+                .map(days -> {
+                    ArrayList<WeatherEntity> entityList = new ArrayList<>();
 
-
-        //WeatherRest returnValue = new WeatherRest();
-        //ModelMapper modelMapper = new ModelMapper();
-        //WeatherDTO weatherDTO = modelMapper.map(weatherProg, WeatherDTO.class);
-        //WeatherDTO savedWeather = weatherService.saveWeatherPredictionWeek(weatherDTO);
-        //returnValue = modelMapper.map(savedWeather, WeatherRest.class);
-
+                    for (Day day:days) {
+                        WeatherEntity entity = new WeatherEntity();
+                        entity.setTN_C(day.getTN_C());
+                        entity.setFF_KMH(day.getFF_KMH());
+                        entity.setLocation(geo_id);
+                        entity.setPROBPCP_PERCENT(day.getPROBPCP_PERCENT());
+                        entity.setTX_C(day.getTX_C());
+                        entity.setLocal_date_time(day.getLocal_date_time());
+                        entityList.add(entity);
+                    }
+                    return entityList;
+                })
+                .flatMap(weatherEntities -> weatherRepository.saveAll(weatherEntities));
     }
 
     // BQ
@@ -153,8 +156,8 @@ public class PriceController {
         String location = ticketDetails.getVenue();
 
         // if datum in tti
-        Date dateEnd = new SimpleDateFormat("dd.mm.yyyy").parse(ticketDetails.getEnd_time());
-        Date dateStart = new SimpleDateFormat("dd.mm.yyyy").parse(ticketDetails.getStart_time());
+        Date dateEnd = new SimpleDateFormat("dd.MM.yyyy").parse(ticketDetails.getEnd_time());
+        Date dateStart = new SimpleDateFormat("dd.MM.yyyy").parse(ticketDetails.getStart_time());
         Date now = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(now);
@@ -162,13 +165,12 @@ public class PriceController {
         c.add(Calendar.HOUR, 7 * 24);
         Date maxDate = c.getTime();
         if (dateStart.after(now) && dateStart.before(dateEnd) && dateEnd.before(maxDate)) {
-            Flux<ForecastFlux> weatherForecast = weatherClient.getForecast(location);
+            return venueRepository.findByVenueName(location).map(venue -> priceService.getWeatherInfluence(venue, dateStart));
 
-        }
-
+        } else{
         return venueRepository.findByVenueName(location).map(venue ->
-                priceService.getPrices(venue)
-        );
+                priceService.getDemandInfluence(venue))
+                ;}
     }
 
     // return list of venues

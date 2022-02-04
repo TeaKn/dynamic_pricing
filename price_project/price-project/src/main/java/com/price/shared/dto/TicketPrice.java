@@ -6,6 +6,24 @@ public class TicketPrice {
 
     private Date date;
     private Double price;
+    private Double demandPrice;
+    private Double weatherPrice;
+
+    public Double getDemandPrice() {
+        return demandPrice;
+    }
+
+    public void setDemandPrice(Double demandPrice) {
+        this.demandPrice = demandPrice;
+    }
+
+    public Double getWeatherPrice() {
+        return weatherPrice;
+    }
+
+    public void setWeatherPrice(Double weatherPrice) {
+        this.weatherPrice = weatherPrice;
+    }
 
     public Date getDate() {
         return date;

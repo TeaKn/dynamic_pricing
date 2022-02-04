@@ -1,9 +1,12 @@
 package com.price.io.entity;
 
+import com.price.ui.model.response.Day;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+
+import java.util.Date;
 
 
 @Table("weather")
@@ -11,16 +14,16 @@ import org.springframework.data.relational.core.mapping.Table;
 public class WeatherEntity {
 
     @Id
-    private Long id;
+    private String location;
 
     @Column
-    private String local_date_time;
+    private Date local_date_time;
 
     @Column
     private Integer TX_C;
 
     @Column
-    private Integer TX_N;
+    private Integer TN_C;
 
     @Column
     private Integer FF_KMH;
@@ -28,19 +31,19 @@ public class WeatherEntity {
     @Column
     private Integer PROBPCP_PERCENT;
 
-    public Long getId() {
-        return id;
+    public String getLocation() {
+        return location;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
-    public String getLocal_date_time() {
+    public Date getLocal_date_time() {
         return local_date_time;
     }
 
-    public void setLocal_date_time(String local_date_time) {
+    public void setLocal_date_time(Date local_date_time) {
         this.local_date_time = local_date_time;
     }
 
@@ -52,12 +55,12 @@ public class WeatherEntity {
         this.TX_C = TX_C;
     }
 
-    public Integer getTX_N() {
-        return TX_N;
+    public Integer getTN_C() {
+        return TN_C;
     }
 
-    public void setTX_N(Integer TX_N) {
-        this.TX_N = TX_N;
+    public void setTN_C(Integer TN_C) {
+        this.TN_C = TN_C;
     }
 
     public Integer getFF_KMH() {

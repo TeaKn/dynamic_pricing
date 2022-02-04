@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+import java.util.Date;
+
 public class Day {
 
     public Day() {
     }
 
     @JsonProperty("local_date_time")
-    private String local_date_time;
+    private Date local_date_time;
 
     @JsonProperty("TX_C")
     private Integer TX_C;
@@ -55,12 +57,12 @@ public class Day {
     private Object max_color;
 
     @JsonGetter("local_date_time")
-    public String getLocal_date_time() {
+    public Date getLocal_date_time() {
         return local_date_time;
     }
 
     @JsonSetter("local_date_time")
-    public void setLocal_date_time(String local_date_time) {
+    public void setLocal_date_time(Date local_date_time) {
         this.local_date_time = local_date_time;
     }
 
