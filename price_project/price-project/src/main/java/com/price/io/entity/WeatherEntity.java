@@ -32,6 +32,9 @@ public class WeatherEntity {
     private Integer FF_KMH;
 
     @Column
+    private Integer FX_KMH;
+
+    @Column
     private Integer PROBPCP_PERCENT;
 
     public long getId() {
@@ -40,6 +43,14 @@ public class WeatherEntity {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Integer getFX_KMH() {
+        return FX_KMH;
+    }
+
+    public void setFX_KMH(Integer FX_KMH) {
+        this.FX_KMH = FX_KMH;
     }
 
     public String getLocation() {

@@ -101,7 +101,9 @@ public class PriceController {
 
         ModelMapper modelMapper = new ModelMapper();
 
-        return weatherRes
+        return weatherRepository
+                .deleteAll().thenMany(
+                        weatherRes
                 .map(ForecastFlux::getForecast)
                 .map(Forecast::getDay)
                 .map(days -> {
@@ -115,11 +117,12 @@ public class PriceController {
                         entity.setPROBPCP_PERCENT(day.getPROBPCP_PERCENT());
                         entity.setTX_C(day.getTX_C());
                         entity.setLocal_date_time(day.getLocal_date_time());
+                        entity.setFX_KMH(day.getFX_KMH());
                         entityList.add(entity);
                     }
                     return entityList;
                 })
-                .flatMap(weatherEntities -> weatherRepository.saveAll(weatherEntities));
+                .flatMap(weatherEntities -> weatherRepository.saveAll(weatherEntities)));
     }
 
     // BQ

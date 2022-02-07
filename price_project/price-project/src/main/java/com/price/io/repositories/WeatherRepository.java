@@ -5,10 +5,15 @@ import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.Date;
 
 public interface WeatherRepository extends ReactiveCrudRepository<WeatherEntity, Long> {
 
     @Query("SELECT * FROM weather WHERE date = :date")
-    Flux<WeatherEntity> findByDate(@Param("date") String date);
+    Flux<WeatherEntity> findByDate(@Param("date") Date date);
 
+    @Query("DELETE FROM weather")
+    Mono<Void> deleteAll();
 }

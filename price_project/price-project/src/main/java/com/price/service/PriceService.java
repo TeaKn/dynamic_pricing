@@ -1,6 +1,8 @@
 package com.price.service;
 
 import com.price.io.entity.VenueEntity;
+import com.price.io.entity.WeatherEntity;
+import com.price.io.repositories.WeatherRepository;
 import com.price.service.client.BQClient;
 import com.price.service.client.WeatherClient;
 import com.price.shared.dto.ForecastDemand;
@@ -12,6 +14,7 @@ import com.price.ui.model.response.ForecastFlux;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -31,40 +34,25 @@ public class PriceService {
 
     @Autowired
     WeatherClient weatherClient;
+    private WeatherRepository weatherRepository;
 
-    public List<TicketPrice> getWeatherInfluence(VenueEntity venueEntity, Date date) {
+    public Mono<List<Double>> getWeatherInfluence(VenueEntity venueEntity, Date date) {
 
         String location = venueEntity.getName();
-
-        Flux<ForecastFlux> forecast = weatherClient.getForecast(location);
         List<TicketPrice> ticketPriceList = new ArrayList<>();
 
+        Flux<WeatherEntity> byDate = weatherRepository.findByDate(date);
+        return byDate.map(weatherEntity -> {
+                int max_temp = weatherEntity.getTX_C();
+                int min_temp = weatherEntity.getTN_C();
+                int avg_temp = (max_temp + min_temp) / 2;
+                int wind_f = weatherEntity.getFF_KMH();
+                int wind_x = weatherEntity.getFX_KMH();
+                int avg_wind = (wind_f + wind_x) / 2; //sounds like bullshit
+                double factor = 13.12 + (0.6215 * avg_temp) - (11.37 * avg_wind * 0.16) + (0.3965 * avg_temp * avg_wind * 0.16); // ta formula naj bi veljala za temp pod -10 celzija
+                return factor;
+        }).collectList();
 
-        forecast.map(ForecastFlux::getForecast)
-                .map(Forecast::getDay)
-               .map(days -> {
-                   for (Day day:days) {
-                       if (day.getLocal_date_time() == date) {
-                           // not trying it with model mapper but assigning every value
-                           double factor;
-                           Integer percp = day.getPROBPCP_PERCENT();
-                           Integer max_temp = day.getTX_C();
-                           Integer min_temp = day.getTN_C();
-                           Integer wind_f = day.getFF_KMH();
-                           Integer wind_x = day.getFX_KMH();
-                           int avg_temp = (max_temp + min_temp) / 2;
-                           int avg_wind = (wind_f + wind_x) / 2;
-                           factor = 13.12 + (0.6215 * avg_temp) - (11.37 * avg_wind * 0.16) + (0.3965 * avg_temp * avg_wind * 0.16); // ta formula naj bi veljala za temp pod -10 celzija
-                           TicketPrice ticketPrice = new TicketPrice();
-                           ticketPrice.setWeatherPrice(factor);
-                           ticketPrice.setDate(day.getLocal_date_time());
-                           ticketPriceList.add(ticketPrice);
-                           return ticketPriceList;
-                       }
-                   }
-                   return ticketPriceList;
-               }).collectList().subscribe();
-        return ticketPriceList;
 
     }
 

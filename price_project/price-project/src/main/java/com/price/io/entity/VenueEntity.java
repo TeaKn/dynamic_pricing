@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import reactor.util.annotation.NonNull;
 
 @Table("venues")
 @Data
@@ -11,10 +12,10 @@ public class VenueEntity {
 
     // use this model class to persist to the database
 
-    @Id
-    private Long id; // autoincremented id
+    //@Id
+    //private Long id; // autoincremented id
 
-    @Column
+    @Id
     private String name;
 
     @Column
