@@ -14,6 +14,9 @@ import java.util.Date;
 public class WeatherEntity {
 
     @Id
+    private long id;
+
+    @Column
     private String location;
 
     @Column
@@ -30,6 +33,14 @@ public class WeatherEntity {
 
     @Column
     private Integer PROBPCP_PERCENT;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getLocation() {
         return location;

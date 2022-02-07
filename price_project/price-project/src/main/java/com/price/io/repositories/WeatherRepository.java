@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 
-public interface WeatherRepository extends ReactiveCrudRepository<WeatherEntity, String> {
+public interface WeatherRepository extends ReactiveCrudRepository<WeatherEntity, Long> {
 
     @Query("SELECT * FROM weather WHERE date = :date")
     Flux<WeatherEntity> findByDate(@Param("date") String date);

@@ -165,10 +165,10 @@ public class PriceController {
         c.add(Calendar.HOUR, 7 * 24);
         Date maxDate = c.getTime();
         if (dateStart.after(now) && dateStart.before(dateEnd) && dateEnd.before(maxDate)) {
-            return venueRepository.findByVenueName(location).map(venue -> priceService.getWeatherInfluence(venue, dateStart));
+            return venueRepository.findById(location).map(venue -> priceService.getWeatherInfluence(venue, dateStart));
 
         } else{
-        return venueRepository.findByVenueName(location).map(venue ->
+        return venueRepository.findById(location).map(venue ->
                 priceService.getDemandInfluence(venue))
                 ;}
     }
