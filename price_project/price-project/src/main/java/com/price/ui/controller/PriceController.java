@@ -188,5 +188,4 @@ public class PriceController {
         return venueRepository.save(venueEntity);
     }
 
-    // TODO: ticket request, get weather for the day and get venue details
 }
