@@ -1,17 +1,17 @@
 package com.price.shared.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class ForecastDemand {
 
-    private Date date;
+    private LocalDate date;
     private Double demand;
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
