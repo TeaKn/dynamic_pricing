@@ -1,9 +1,11 @@
 package com.price.service.client;
 
 import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.Timestamp;
 import com.google.cloud.bigquery.*;
 import com.price.shared.dto.ForecastDemand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,6 +15,8 @@ import reactor.core.publisher.Mono;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -184,7 +188,7 @@ public class BQClient {
 
     public List<ForecastDemand> explainForecast() throws IOException {
 
-        String query = "SELECT forecast_timestamp, forecast_value FROM ML.FORECAST(MODEL bqml_tutorials.nyc_citibike_arima_model, STRUCT(30 AS horizon, 0.9 AS confidence_level))";
+        String query = "SELECT forecast_timestamp, forecast_value FROM ML.FORECAST(MODEL bqml_tutorials.nyc_citibike_arima_model, STRUCT(365 AS horizon, 0.9 AS confidence_level))";
 
         QueryJobConfiguration queryConfig =
                 QueryJobConfiguration.newBuilder(query)
@@ -216,12 +220,15 @@ public class BQClient {
             List<ForecastDemand> forecastDemands = new ArrayList<>();
             for(FieldValueList value : result.getValues()) {
                 ForecastDemand forecastDemand = new ForecastDemand();
-                Date time = new Date(value.get("forecast_timestamp").getTimestampValue());
-                forecastDemand.setDate(time);
+                //Date time = new Date(value.get("forecast_timestamp").getTimestampValue()); // leto ni vredu
+                Timestamp timestamp = Timestamp.ofTimeMicroseconds(value.get("forecast_timestamp").getTimestampValue());
+                Date time = timestamp.toDate();
+                LocalDate time1 = time.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().plusYears(5); // added 5 years beacuse this forecast is for oct2016-0ct2017
+                forecastDemand.setDate(time1);
                 forecastDemand.setDemand(value.get("forecast_value").getDoubleValue());
                 forecastDemands.add(forecastDemand);
-                System.out.println(time);
-                System.out.println(value.get("forecast_value").getValue());
+                //System.out.println(time);
+                //System.out.println(value.get("forecast_value").getValue());
             }
 
             return forecastDemands;
