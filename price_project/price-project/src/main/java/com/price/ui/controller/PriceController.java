@@ -11,6 +11,7 @@ import com.price.service.WeatherService;
 import com.price.service.client.BQClient;
 import com.price.service.client.WeatherClient;
 import com.price.shared.dto.ForecastDemand;
+import com.price.shared.dto.TicketPrice;
 import com.price.ui.model.request.TicketRequestModel;
 import com.price.ui.model.response.*;
 import lombok.extern.slf4j.Slf4j;
@@ -18,16 +19,16 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 @RestController
@@ -150,7 +151,7 @@ public class PriceController {
     // TICKET REQUEST
 
     @PostMapping(path = "/tickets", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Object> ticketRequest(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
+    public Flux<List<Double>> ticketRequest(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
 
         //ModelMapper modelMapper = new ModelMapper();
         //TicketDTO ticketDTO = modelMapper.map(ticketDetails, TicketDTO.class);
@@ -159,21 +160,40 @@ public class PriceController {
         String location = ticketDetails.getVenue();
 
         // if datum in tti
-        Date dateEnd = new SimpleDateFormat("dd.MM.yyyy").parse(ticketDetails.getEnd_time());
-        Date dateStart = new SimpleDateFormat("dd.MM.yyyy").parse(ticketDetails.getStart_time());
-        Date now = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(now);
+        //LocalDate dateEnd = ticketDetails.getEnd_time();
+        //LocalDate dateStart = ticketDetails.getStart_time();
+        LocalDate now = LocalDate.now();
+        LocalDate last_weather_day = LocalDate.now().plusDays(7);
 
-        c.add(Calendar.HOUR, 7 * 24);
-        Date maxDate = c.getTime();
-        if (dateStart.after(now) && dateStart.before(dateEnd) && dateEnd.before(maxDate)) {
-            return venueRepository.findById(location).map(venue -> priceService.getWeatherInfluence(venue, dateStart));
+        //if (dateStart.after(now) && dateStart.before(dateEnd) && dateEnd.before(maxDate)) {
+        //    return venueRepository.findById(location).flatMap(venue -> priceService.getWeatherInfluence(venue, dateStart)).flux();
 
-        } else{
-        return venueRepository.findById(location).map(venue ->
-                priceService.getDemandInfluence(venue))
-                ;}
+        //} else {
+        //    return venueRepository.findById(location).map(venue ->
+        //            priceService.getDemandInfluence(venue))
+        //            ;}
+
+        return new Flux<List<Double>>() {
+            @Override
+            public void subscribe(CoreSubscriber<? super List<Double>> coreSubscriber) {
+
+            }
+        };
+    }
+
+    @PostMapping(path = "/tickets1", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<Stream<Iterable<TicketPrice>>> ticketRequest1(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
+        String location = ticketDetails.getVenue();
+        LocalDate dateEnd = LocalDate.parse(ticketDetails.getEnd_time());
+        LocalDate dateStart = LocalDate.parse(ticketDetails.getStart_time());
+        LocalDate now = LocalDate.now();
+        LocalDate last_weather_day = LocalDate.now().plusDays(7);
+
+        return venueRepository.findById(location)
+                .map(venueEntity -> priceService.getDemandInfluence(venueEntity, dateStart, dateEnd))
+                .map(ticketPrices -> ticketPrices
+                        .map(ticketPrice -> priceService.getWeatherInfluence(ticketPrice)))
+                ;
     }
 
     // return list of venues
