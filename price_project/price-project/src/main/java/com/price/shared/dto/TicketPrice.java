@@ -1,10 +1,10 @@
 package com.price.shared.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class TicketPrice {
 
-    private Date date;
+    private LocalDate date;
     private Double price;
     private Double demandPrice;
     private Double weatherPrice;
@@ -25,11 +25,11 @@ public class TicketPrice {
         this.weatherPrice = weatherPrice;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
