@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -34,11 +35,11 @@ public class PriceService {
     @Autowired
     WeatherRepository weatherRepository;
 
-    public Iterable<TicketPrice> getWeatherInfluence(TicketPrice ticketPrice) {
+    public Flux<TicketPrice> getWeatherInfluence(TicketPrice ticketPrice) {
 
         LocalDate date = ticketPrice.getDate();
 
-        Flux<WeatherEntity> byDate = weatherRepository.findByDate(date);
+        Flux<WeatherEntity> byDate = weatherRepository.findByDate(java.sql.Date.valueOf(date));
         return byDate.map(weatherEntity -> {
             Double factor;
             Integer max_temp = weatherEntity.getTX_C();
@@ -52,12 +53,12 @@ public class PriceService {
             System.out.println(factor);
             ticketPrice.setWeatherPrice(factor);
             return ticketPrice;
-        }).toIterable();
+        });
 
 
     }
 
-    public Stream<TicketPrice> getDemandInfluence(VenueEntity venueEntity, LocalDate dateStart, LocalDate dateEnd) {
+    public Flux<TicketPrice> getDemandInfluence(VenueEntity venueEntity, LocalDate dateStart, LocalDate dateEnd) {
 
         //bq, bq effect is always present
         List<ForecastDemand> forecast = null;
@@ -70,7 +71,7 @@ public class PriceService {
         Double dailyAverage = 45000.0; // was hardcoded for Airolo
 
         assert forecast != null;
-        return forecast.stream()
+        return Flux.fromIterable(forecast)
                 .filter(forecastDemand -> forecastDemand.getDate().isAfter(dateStart) && forecastDemand.getDate().isBefore(dateEnd)) // vržem ven nepotrebne podatke
                 .map(demand -> {
                     double d = (demand.getDemand() - dailyAverage) / dailyAverage;
@@ -113,6 +114,10 @@ public class PriceService {
 
     }
 
-    // TODO: Function<Double, Double > priceBounding()
+    // TODO: Function<Double, Double > priceBounding() idk anymore
+    // TODO: Fucntion<List, List> DemandInfluence() idk anymore
+
+
+
 
 }

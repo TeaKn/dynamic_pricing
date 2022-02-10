@@ -7,13 +7,13 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Date;
 
 public interface WeatherRepository extends ReactiveCrudRepository<WeatherEntity, Long> {
 
     @Query("SELECT * FROM weather WHERE local_date_time = :date")
-    Flux<WeatherEntity> findByDate(@Param("date") LocalDate date);
+    Flux<WeatherEntity> findByDate(@Param("date") Date date);
 
     @Query("DELETE FROM weather")
     Mono<Void> deleteAll();
