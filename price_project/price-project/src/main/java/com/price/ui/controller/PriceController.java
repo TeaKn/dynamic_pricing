@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -182,7 +183,7 @@ public class PriceController {
     }
 
     @PostMapping(path = "/tickets1", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<Stream<Iterable<TicketPrice>>> ticketRequest1(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
+    public Flux<TicketPrice> ticketRequest1(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
         String location = ticketDetails.getVenue();
         LocalDate dateEnd = LocalDate.parse(ticketDetails.getEnd_time());
         LocalDate dateStart = LocalDate.parse(ticketDetails.getStart_time());
@@ -190,10 +191,8 @@ public class PriceController {
         LocalDate last_weather_day = LocalDate.now().plusDays(7);
 
         return venueRepository.findById(location)
-                .map(venueEntity -> priceService.getDemandInfluence(venueEntity, dateStart, dateEnd))
-                .map(ticketPrices -> ticketPrices
-                        .map(ticketPrice -> priceService.getWeatherInfluence(ticketPrice)))
-                ;
+                .flatMapMany(venueEntity -> priceService.getDemandInfluence(venueEntity, dateStart, dateEnd))
+                .flatMap(ticketPrice -> priceService.getWeatherInfluence(ticketPrice));
     }
 
     // return list of venues
