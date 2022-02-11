@@ -2,10 +2,13 @@ package com.price.io.entity;
 
 import com.price.ui.model.response.Day;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -19,8 +22,8 @@ public class WeatherEntity {
     @Column
     private String location;
 
-    @Column
-    private Date local_date_time;
+    @DateTimeFormat
+    private LocalDate local_date_time;
 
     @Column
     private Integer TX_C;
@@ -61,11 +64,11 @@ public class WeatherEntity {
         this.location = location;
     }
 
-    public Date getLocal_date_time() {
+    public LocalDate getLocal_date_time() {
         return local_date_time;
     }
 
-    public void setLocal_date_time(Date local_date_time) {
+    public void setLocal_date_time(LocalDate local_date_time) {
         this.local_date_time = local_date_time;
     }
 

@@ -26,6 +26,7 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -118,7 +119,7 @@ public class PriceController {
                         entity.setLocation(geo_id);
                         entity.setPROBPCP_PERCENT(day.getPROBPCP_PERCENT());
                         entity.setTX_C(day.getTX_C());
-                        entity.setLocal_date_time(day.getLocal_date_time());
+                        entity.setLocal_date_time(day.getLocal_date_time().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
                         entity.setFX_KMH(day.getFX_KMH());
                         entityList.add(entity);
                     }

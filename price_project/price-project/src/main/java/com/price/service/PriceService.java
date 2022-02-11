@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -37,9 +38,10 @@ public class PriceService {
 
     public Flux<TicketPrice> getWeatherInfluence(TicketPrice ticketPrice) {
 
-        LocalDate date = ticketPrice.getDate();
+        LocalDate localDate = ticketPrice.getDate();
+        //Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        Flux<WeatherEntity> byDate = weatherRepository.findByDate(java.sql.Date.valueOf(date));
+        Flux<WeatherEntity> byDate = weatherRepository.findByDate(localDate);
         return byDate.map(weatherEntity -> {
             Double factor;
             Integer max_temp = weatherEntity.getTX_C();
