@@ -5,9 +5,14 @@ import java.time.LocalDate;
 public class TicketPrice {
 
     private LocalDate date;
-    private Double price;
-    private Double demandPrice;
-    private Double weatherPrice;
+    private Double price; // dynamic price
+    private Double demandPrice; // arima price prediction
+    private Double windChill; // wind chill in celsius
+    private Double weatherInfluence; // effect of weather in percentage
+    private Double basePrice;
+    private Double weatherPrice; // price after weather influence has been applied, currently to demand price
+    private Double priceMax;
+    private Double priceMin;
 
     public Double getDemandPrice() {
         return demandPrice;
@@ -17,12 +22,12 @@ public class TicketPrice {
         this.demandPrice = demandPrice;
     }
 
-    public Double getWeatherPrice() {
-        return weatherPrice;
+    public Double getWindChill() {
+        return windChill;
     }
 
-    public void setWeatherPrice(Double weatherPrice) {
-        this.weatherPrice = weatherPrice;
+    public void setWindChill(Double weatherPrice) {
+        this.windChill = weatherPrice;
     }
 
     public LocalDate getDate() {
@@ -39,5 +44,45 @@ public class TicketPrice {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Double getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(Double basePrice) {
+        this.basePrice = basePrice;
+    }
+
+    public Double getWeatherInfluence() {
+        return weatherInfluence;
+    }
+
+    public void setWeatherInfluence(Double weatherInfluence) {
+        this.weatherInfluence = weatherInfluence;
+    }
+
+    public Double getWeatherPrice() {
+        return weatherPrice;
+    }
+
+    public void setWeatherPrice(Double weatherPrice) {
+        this.weatherPrice = weatherPrice;
+    }
+
+    public Double getPriceMax() {
+        return priceMax;
+    }
+
+    public void setPriceMax(Double priceMax) {
+        this.priceMax = priceMax;
+    }
+
+    public Double getPriceMin() {
+        return priceMin;
+    }
+
+    public void setPriceMin(Double priceMin) {
+        this.priceMin = priceMin;
     }
 }

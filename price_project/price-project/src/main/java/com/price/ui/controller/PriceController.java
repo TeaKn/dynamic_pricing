@@ -193,7 +193,8 @@ public class PriceController {
 
         return venueRepository.findById(location)
                 .flatMapMany(venueEntity -> priceService.getDemandInfluence(venueEntity, dateStart, dateEnd))
-                .flatMap(ticketPrice -> priceService.getWeatherInfluence(ticketPrice));
+                .flatMap(ticketPrice -> priceService.getWeatherInfluence(ticketPrice))
+                .flatMap(ticketPrice -> priceService.getPrices(ticketPrice));
     }
 
     // return list of venues
