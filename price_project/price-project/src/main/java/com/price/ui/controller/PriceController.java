@@ -193,8 +193,11 @@ public class PriceController {
 
         return venueRepository.findById(location)
                 .flatMapMany(venueEntity -> priceService.getDemandInfluence(venueEntity, dateStart, dateEnd))
+                // todo: za flat many, neke rule vzame v zakup (hocmo drug base price)
                 .flatMap(ticketPrice -> priceService.getWeatherInfluence(ticketPrice))
                 .flatMap(ticketPrice -> priceService.getPrices(ticketPrice));
+                // todo: discount, additional specifications (ne dela žičnica)
+
     }
 
     // return list of venues
