@@ -31,21 +31,25 @@ public class PriceService {
 
         LocalDate localDate = ticketPrice.getDate();
 
+        //Localdate.now() + 7 days, but for now hardcoded to this crap beacuse weather api not functional
+        if(localDate.isBefore(LocalDate.of(2022, 2, 21))) {
+
         Flux<WeatherEntity> byDate = weatherRepository.findByDate(localDate);
         return byDate.map(weatherEntity -> {
-            Double factor;
+            double factor;
             Integer max_temp = weatherEntity.getTX_C();
             Integer min_temp = weatherEntity.getTN_C();
             int avg_temp = (max_temp + min_temp) / 2;
             Integer wind_f = weatherEntity.getFF_KMH();
-            Integer wind_x = weatherEntity.getFX_KMH(); // gust peak
             factor = 13.12 + (0.6215 * avg_temp) - (11.37 * wind_f * 0.16) + (0.3965 * avg_temp * wind_f * 0.16); // ta formula naj bi veljala za temp pod -10 celzija
-            System.out.println("I am HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-            System.out.println(factor);
             ticketPrice.setWindChill(factor);
             return ticketPrice;
         });
-
+        }
+        else {
+            ticketPrice.setWindChill(9999.99);
+            return Flux.just(ticketPrice);
+        }
 
     }
 
@@ -74,6 +78,7 @@ public class PriceService {
                     ticketPrice.setBasePrice(venueEntity.getAdult_base_price());
                     ticketPrice.setPriceMax(venueEntity.getPrice_max());
                     ticketPrice.setPriceMin(venueEntity.getPrice_min());
+                    ticketPrice.setDemandNumber(Math.round(demand.getDemand()));
                     return ticketPrice;
                 });
 
@@ -88,7 +93,11 @@ public class PriceService {
         //apply demand
 
         //apply weather influence
-        if (10 <= wind_chill_index) {
+        if (Math.abs(wind_chill_index - 9999.99) < 0.000001d) {
+            weather_influence = 0.0;
+            ticketPrice.setWeatherInfluence(0.0);
+        }
+        else if (10 <= wind_chill_index) {
             weather_influence = change_vector[3];
             ticketPrice.setWeatherInfluence(change_vector[3]);
         }
@@ -112,10 +121,12 @@ public class PriceService {
             weather_influence = change_vector[2];
             ticketPrice.setWeatherInfluence(change_vector[2]);
         }
-        else {
+        else if (-30 <= wind_chill_index){
             weather_influence = change_vector[3];
             ticketPrice.setWeatherInfluence(change_vector[3]);
         }
+        else {weather_influence = 0.0;
+        ticketPrice.setWeatherInfluence(0.0);} // case out of bounds
 
         ticketPrice.setWeatherPrice(ticketPrice.getDemandPrice() + weather_influence * 1/100);
 

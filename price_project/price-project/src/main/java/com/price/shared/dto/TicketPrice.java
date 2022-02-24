@@ -7,6 +7,7 @@ public class TicketPrice {
     private LocalDate date;
     private Double price; // dynamic price
     private Double demandPrice; // arima price prediction
+    private long demandNumber;
     private Double windChill; // wind chill in celsius
     private Double weatherInfluence; // effect of weather in percentage
     private Double basePrice;
@@ -84,5 +85,13 @@ public class TicketPrice {
 
     public void setPriceMin(Double priceMin) {
         this.priceMin = priceMin;
+    }
+
+    public long getDemandNumber() {
+        return demandNumber;
+    }
+
+    public void setDemandNumber(long demandNumber) {
+        this.demandNumber = demandNumber;
     }
 }
