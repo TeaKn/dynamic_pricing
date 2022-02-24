@@ -63,7 +63,7 @@ public class PriceService {
             e.printStackTrace();
         }
 
-        Double dailyAverage = 45000.0; // was hardcoded for Airolo
+        Double dailyAverage = 27000.0; // was hardcoded for based on arima values for week 14.02 - 20.02
 
         assert forecast != null;
         return Flux.fromIterable(forecast)
