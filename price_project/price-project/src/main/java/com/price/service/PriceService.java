@@ -7,16 +7,12 @@ import com.price.service.client.BQClient;
 import com.price.service.client.WeatherClient;
 import com.price.shared.dto.ForecastDemand;
 import com.price.shared.dto.TicketPrice;
-import com.price.ui.model.request.TicketRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -34,7 +30,6 @@ public class PriceService {
     public Flux<TicketPrice> getWeatherInfluence(TicketPrice ticketPrice) {
 
         LocalDate localDate = ticketPrice.getDate();
-        //Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         Flux<WeatherEntity> byDate = weatherRepository.findByDate(localDate);
         return byDate.map(weatherEntity -> {
@@ -68,7 +63,7 @@ public class PriceService {
 
         assert forecast != null;
         return Flux.fromIterable(forecast)
-                .filter(forecastDemand -> forecastDemand.getDate().isAfter(dateStart) && forecastDemand.getDate().isBefore(dateEnd)) // vržem ven nepotrebne podatke
+                .filter(forecastDemand -> forecastDemand.getDate().isAfter(dateStart.minusDays(1)) && forecastDemand.getDate().isBefore(dateEnd.plusDays(1))) // vržem ven nepotrebne podatke
                 .map(demand -> {
                     double d = (demand.getDemand() - dailyAverage) / dailyAverage;
                     Double price = venueEntity.getAdult_base_price() + d * 10;
@@ -85,8 +80,8 @@ public class PriceService {
 
     }
     public Flux<TicketPrice> getPrices(TicketPrice ticketPrice){
-        Double wind_chill_optimal = -9.5;
-        double change_vector[] = {10, -2, -5, -10}; // in percentage
+        double wind_chill_optimal = -9.5;
+        double[] change_vector = {10, -2, -5, -10}; // in percentage
         double wind_chill_index = ticketPrice.getWindChill();
         double weather_influence;
 
@@ -105,7 +100,7 @@ public class PriceService {
             weather_influence = change_vector[1];
             ticketPrice.setWeatherInfluence(change_vector[1]);
         }
-        else if (-9.5 <= wind_chill_index) {
+        else if (wind_chill_optimal <= wind_chill_index) {
             weather_influence = change_vector[0];
             ticketPrice.setWeatherInfluence(change_vector[0]);
         }
