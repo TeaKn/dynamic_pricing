@@ -81,9 +81,8 @@ public class PriceService {
                     ticketPrice.setDemandNumber(Math.round(demand.getDemand()));
                     return ticketPrice;
                 });
-
-
     }
+
     public Flux<TicketPrice> getPrices(TicketPrice ticketPrice){
         double wind_chill_optimal = -9.5;
         double[] change_vector = {10, -2, -5, -10}; // in percentage

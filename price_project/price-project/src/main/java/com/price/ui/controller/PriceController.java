@@ -19,7 +19,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -29,8 +28,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @RestController
@@ -153,38 +150,7 @@ public class PriceController {
     // TICKET REQUEST
 
     @PostMapping(path = "/tickets", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<List<Double>> ticketRequest(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
-
-        //ModelMapper modelMapper = new ModelMapper();
-        //TicketDTO ticketDTO = modelMapper.map(ticketDetails, TicketDTO.class);
-
-        // parse input
-        String location = ticketDetails.getVenue();
-
-        // if datum in tti
-        //LocalDate dateEnd = ticketDetails.getEnd_time();
-        //LocalDate dateStart = ticketDetails.getStart_time();
-        LocalDate now = LocalDate.now();
-        LocalDate last_weather_day = LocalDate.now().plusDays(7);
-
-        //if (dateStart.after(now) && dateStart.before(dateEnd) && dateEnd.before(maxDate)) {
-        //    return venueRepository.findById(location).flatMap(venue -> priceService.getWeatherInfluence(venue, dateStart)).flux();
-
-        //} else {
-        //    return venueRepository.findById(location).map(venue ->
-        //            priceService.getDemandInfluence(venue))
-        //            ;}
-
-        return new Flux<List<Double>>() {
-            @Override
-            public void subscribe(CoreSubscriber<? super List<Double>> coreSubscriber) {
-
-            }
-        };
-    }
-
-    @PostMapping(path = "/tickets1", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<TicketPrice> ticketRequest1(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
+    public Flux<TicketPrice> ticketRequest(@RequestBody TicketRequestModel ticketDetails) throws ParseException {
         String location = ticketDetails.getVenue();
         LocalDate dateEnd = LocalDate.parse(ticketDetails.getEnd_time());
         LocalDate dateStart = LocalDate.parse(ticketDetails.getStart_time());
