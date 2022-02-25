@@ -6,6 +6,7 @@ public class TicketRequestModel {
     private String start_time;
     private String end_time;
     private String ticket_id;
+    private RulingParam rulingParam;
 
     public String getVenue() {
         return venue;
@@ -37,5 +38,13 @@ public class TicketRequestModel {
 
     public void setTicket_id(String ticket_id) {
         this.ticket_id = ticket_id;
+    }
+
+    public RulingParam getRulingParam() {
+        return rulingParam;
+    }
+
+    public void setRulingParam(RulingParam rulingParam) {
+        this.rulingParam = rulingParam;
     }
 }

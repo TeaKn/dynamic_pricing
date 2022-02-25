@@ -154,12 +154,10 @@ public class PriceController {
         String location = ticketDetails.getVenue();
         LocalDate dateEnd = LocalDate.parse(ticketDetails.getEnd_time());
         LocalDate dateStart = LocalDate.parse(ticketDetails.getStart_time());
-        LocalDate now = LocalDate.now();
-        LocalDate last_weather_day = LocalDate.now().plusDays(7);
 
         return venueRepository.findById(location)
-                .flatMapMany(venueEntity -> priceService.getDemandInfluence(venueEntity, dateStart, dateEnd))
                 // todo: za flat many, neke rule vzame v zakup (hocmo drug base price)
+                .flatMapMany(venueEntity -> priceService.getDemandInfluence(venueEntity, dateStart, dateEnd))
                 .flatMap(ticketPrice -> priceService.getWeatherInfluence(ticketPrice))
                 .flatMap(ticketPrice -> priceService.getPrices(ticketPrice));
                 // todo: discount, additional specifications (ne dela žičnica)
